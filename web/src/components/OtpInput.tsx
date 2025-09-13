@@ -11,7 +11,7 @@ const OtpInput = forwardRef<HTMLInputElement, Props>(function OtpInput(
 ) {
   return (
     <div className="grid gap-1">
-      <label htmlFor={id} className="text-sm font-medium">
+      <label htmlFor={id} className="label">
         {label}
       </label>
       <input
@@ -23,7 +23,7 @@ const OtpInput = forwardRef<HTMLInputElement, Props>(function OtpInput(
         placeholder="123456"
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
-        className="border p-2 rounded w-full tracking-widest text-center"
+        className="input tracking-widest text-center"
         {...rest}
       />
       {error ? (

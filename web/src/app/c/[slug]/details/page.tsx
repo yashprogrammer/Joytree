@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useForm, type Resolver } from "react-hook-form";
+import { use, useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { apiPost } from "@/lib/api";
 import { getToken } from "@/lib/session";
 import { employeeSchema } from "@/lib/validators";
 
@@ -15,13 +14,12 @@ type EmployeeForm = {
   mobile: string;
 };
 
-export default function DetailsPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default function DetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const router = useRouter();
 
   const [error, setError] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
-  const [loading, setLoading] = useState(false);
+  
 
   // Auth guard
   useEffect(() => {
@@ -37,8 +35,8 @@ export default function DetailsPage({ params }: { params: { slug: string } }) {
     try { return JSON.parse(storedEmployee) as Partial<EmployeeForm>; } catch { return {}; }
   })() : {};
 
-  const { register, handleSubmit, formState: { errors, isValid }, setValue, reset } = useForm<EmployeeForm>({
-    resolver: zodResolver(employeeSchema) as unknown as Resolver<EmployeeForm>,
+  const { register, handleSubmit, formState: { errors, isValid }, setValue, reset } = useForm({
+    resolver: (zodResolver as any)(employeeSchema as any),
     mode: "onChange",
     defaultValues: {
       name: parsedEmployee.name || "",
@@ -53,23 +51,8 @@ export default function DetailsPage({ params }: { params: { slug: string } }) {
     if (storedMobile) setValue("mobile", storedMobile, { shouldValidate: true });
   }, [setValue, storedMobile]);
 
-  const onVerifyEmail = async (email: string) => {
-    setError("");
-    setMessage("");
-    setLoading(true);
-    try {
-      await apiPost("/api/auth/verify-email", { email, campaignSlug: slug });
-      setMessage("Email verified successfully");
-    } catch (e: any) {
-      setError(e?.message || "Failed to verify email");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const onSubmit = handleSubmit(async (data) => {
     setError("");
-    setMessage("");
     try {
       if (typeof window !== "undefined") {
         window.localStorage.setItem("joytree_employee", JSON.stringify({
@@ -90,7 +73,6 @@ export default function DetailsPage({ params }: { params: { slug: string } }) {
       window.localStorage.removeItem("joytree_employee");
     }
     reset({ name: "", email: "", empId: "", mobile: storedMobile });
-    setMessage("");
     setError("");
   };
 
@@ -102,7 +84,11 @@ export default function DetailsPage({ params }: { params: { slug: string } }) {
       </div>
 
       {error ? <p className="text-red-600 text-sm">{error}</p> : null}
-      {message ? <p className="text-green-700 text-sm">{message}</p> : null}
+      <div className="grid gap-1">
+          <label className="text-sm font-medium">Mobile (verified): {storedMobile}</label>
+          <input type="hidden" {...register("mobile")} />
+        </div>
+      
 
       <form className="grid gap-4" onSubmit={onSubmit}>
         <div className="grid gap-1">
@@ -110,14 +96,7 @@ export default function DetailsPage({ params }: { params: { slug: string } }) {
           <input className="border p-2 rounded" {...register("email")} aria-invalid={!!errors.email} />
           {errors.email?.message ? <p className="text-sm text-red-600">{errors.email.message as string}</p> : null}
         </div>
-        <button
-          type="button"
-          className="px-3 py-2 border rounded w-fit disabled:opacity-50"
-          onClick={() => onVerifyEmail((document.querySelector('input[name="email"]') as HTMLInputElement)?.value || "")}
-          disabled={!isValid || loading}
-        >
-          {loading ? "Verifying..." : "Verify Email"}
-        </button>
+        
 
         <div className="grid gap-1">
           <label className="text-sm font-medium">Full Name</label>
@@ -130,13 +109,10 @@ export default function DetailsPage({ params }: { params: { slug: string } }) {
           <input className="border p-2 rounded" {...register("empId")} />
         </div>
 
-        <div className="grid gap-1">
-          <label className="text-sm font-medium">Mobile (read-only)</label>
-          <input className="border p-2 rounded " {...register("mobile")} readOnly />
-        </div>
+      
 
         <div className="flex gap-2">
-          <button type="submit" className="px-3 py-2 border rounded bg-black text-white disabled:opacity-50" disabled={!isValid || loading}>
+          <button type="submit" className="px-3 py-2 border rounded bg-black text-white disabled:opacity-50" disabled={!isValid}>
             Submit
           </button>
           <button type="button" className="px-3 py-2 border rounded" onClick={onReset}>

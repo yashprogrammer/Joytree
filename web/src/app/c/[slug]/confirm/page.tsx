@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/lib/session";
 // import { apiPost } from "@/lib/api";
@@ -13,8 +13,8 @@ type OrderInput = {
   address?: { line1: string; line2?: string; city: string; state: string; pincode: string };
 };
 
-export default function ConfirmPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default function ConfirmPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const router = useRouter();
   const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState(false);

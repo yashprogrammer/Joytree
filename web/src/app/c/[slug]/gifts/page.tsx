@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { apiGet } from "@/lib/api";
 import { getToken } from "@/lib/session";
 import GiftCard from "@/components/GiftCard";
 import GiftModal from "@/components/GiftModal";
 
-type Gift = { id: string; title: string; imageUrl?: string; type: "physical" | "digital" };
+type Gift = { id: string; title: string; imageUrl?: string; description?: string; type: "physical" | "digital" };
 type Campaign = { id: string; slug: string; title: string; videoUrl?: string };
 
-export default function GiftsPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default function GiftsPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const router = useRouter();
   const [gifts, setGifts] = useState<Gift[]>([]);
   const [campaign, setCampaign] = useState<Campaign | null>(null);
@@ -73,6 +73,7 @@ export default function GiftsPage({ params }: { params: { slug: string } }) {
       <GiftModal
         open={confirmOpen}
         title={selected?.title || ""}
+        description={selected?.description}
         imageUrl={selected?.imageUrl}
         onConfirm={onConfirm}
         onClose={() => setConfirmOpen(false)}
