@@ -1,7 +1,7 @@
 "use client";
 
 import { use, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { type Resolver, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/lib/session";
@@ -35,8 +35,8 @@ export default function DetailsPage({ params }: { params: Promise<{ slug: string
     try { return JSON.parse(storedEmployee) as Partial<EmployeeForm>; } catch { return {}; }
   })() : {};
 
-  const { register, handleSubmit, formState: { errors, isValid }, setValue, reset } = useForm({
-    resolver: (zodResolver as any)(employeeSchema as any),
+  const { register, handleSubmit, formState: { errors, isValid }, setValue, reset } = useForm<EmployeeForm>({
+    resolver: zodResolver(employeeSchema) as Resolver<EmployeeForm>,
     mode: "onChange",
     defaultValues: {
       name: parsedEmployee.name || "",
@@ -63,8 +63,9 @@ export default function DetailsPage({ params }: { params: Promise<{ slug: string
         }));
       }
       router.push(`/c/${slug}/video`);
-    } catch (e: any) {
-      setError(e?.message || "Failed to save details");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to save details";
+      setError(msg);
     }
   });
 

@@ -11,7 +11,6 @@ type Props = {
 };
 
 export default function GiftModal({ open, title, description, imageUrl, onConfirm, onClose }: Props) {
-  if (!open) return null;
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,6 +48,8 @@ export default function GiftModal({ open, title, description, imageUrl, onConfir
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  if (!open) return null;
 
   return (
     <div role="dialog" aria-modal className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>

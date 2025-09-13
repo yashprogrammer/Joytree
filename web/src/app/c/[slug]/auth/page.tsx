@@ -42,8 +42,9 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
       }
       setOtpRequested(true);
       setMessage("OTP sent successfully");
-    } catch (e: any) {
-      setError(e?.message || "Failed to request OTP");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to request OTP";
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -61,8 +62,9 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
         window.localStorage.setItem("joytree_mobile", mobile);
       }
       router.push(`/c/${slug}/details`);
-    } catch (e: any) {
-      setError(e?.message || "Invalid OTP");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Invalid OTP";
+      setError(msg);
     } finally {
       setLoading(false);
     }

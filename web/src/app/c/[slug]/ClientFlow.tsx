@@ -14,7 +14,6 @@ import { getToken } from "@/lib/session";
 import { orderInputSchema, type OrderInput } from "@/lib/validators";
 
 type Gift = { id: string; title: string; imageUrl: string; type: "physical" | "digital" };
-type Campaign = { id: string; slug: string; title: string; videoUrl?: string };
 
 export default function ClientFlow({ slug }: { slug: string }) {
   const router = useRouter();
@@ -27,7 +26,6 @@ export default function ClientFlow({ slug }: { slug: string }) {
     orderPlaced,
   } = useStepper();
 
-  const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [gifts, setGifts] = useState<Gift[]>([]);
   const [giftModalOpen, setGiftModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -76,14 +74,12 @@ export default function ClientFlow({ slug }: { slug: string }) {
   }, [addr, setAddressProvided]);
 
   useEffect(() => {
-    apiGet<{ gifts: Gift[]; campaign: Campaign }>(`/api/campaigns/${slug}/gifts`)
+    apiGet<{ gifts: Gift[] }>(`/api/campaigns/${slug}/gifts`)
       .then((d) => {
         setGifts(d.gifts || []);
-        setCampaign(d.campaign || null);
       })
       .catch(() => {
         setGifts([]);
-        setCampaign(null);
       });
   }, [slug]);
 
@@ -109,8 +105,8 @@ export default function ClientFlow({ slug }: { slug: string }) {
       const res = await apiPost<{ orderId: string }>("/api/orders", data);
       setOrderPlaced(true);
       router.push(`/order/${res.orderId}/summary`);
-    } catch (e: any) {
-      const msg = e?.message || "Failed to place order";
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to place order";
       if (msg === "DUPLICATE_ORDER") {
         setOrderPlaced(true);
         setOrderError("You have already placed an order for this campaign.");
@@ -148,7 +144,7 @@ export default function ClientFlow({ slug }: { slug: string }) {
           <input className="border p-2 rounded" {...register("employee.empId")} />
         </div>
         {selectedType === "physical" ? (
-          <AddressForm register={register} errors={addressErrors as any} />
+          <AddressForm register={register} errors={addressErrors} />
         ) : null}
       </section>
 

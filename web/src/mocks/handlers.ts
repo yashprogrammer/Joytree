@@ -29,13 +29,18 @@ export const handlers = [
   http.get("/api/campaigns/:slug/gifts", async ({ params }) => {
     const { slug } = params as { slug: string };
     const existing = campaigns.find((c) => c.slug === slug);
-    const campaign = existing ?? ({ id: `mock_${slug}`, slug, title: slug, companyId: "c1", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" } as any);
+    const campaign = existing ?? { id: `mock_${slug}`, slug, title: slug, companyId: "c1", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" };
     const campaignGifts = existing ? gifts.filter((g) => g.campaignId === campaign.id) : gifts;
     return HttpResponse.json({ gifts: campaignGifts, campaign });
   }),
 
   http.post("/api/orders", async ({ request }) => {
-    const body = (await request.json()) as any;
+    const body = (await request.json()) as {
+      campaignSlug: string;
+      giftId: string;
+      employee: { name: string; email: string; empId?: string; mobile: string };
+      address?: { line1: string; line2?: string; city: string; state: string; pincode: string };
+    };
     const { campaignSlug, giftId, employee, address } = body;
     const campaign = campaigns.find((c) => c.slug === campaignSlug);
     if (!campaign) return HttpResponse.json({ error: "NOT_FOUND" }, { status: 404 });
