@@ -1,5 +1,5 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import PhoneInput from "@/components/PhoneInput";
 import OtpInput from "@/components/OtpInput";
@@ -19,7 +19,7 @@ function Demo() {
   const [confirmOpen, setConfirmOpen] = useState(false);
 
   const { register, handleSubmit, formState: { errors, isValid }, watch } = useForm<OrderInput>({
-    resolver: zodResolver(orderInputSchema),
+    resolver: zodResolver(orderInputSchema) as unknown as Resolver<OrderInput>,
     mode: "onChange",
     defaultValues: {
       campaignSlug: "diwali-2025",
@@ -44,7 +44,7 @@ function Demo() {
     <div className="p-6 grid gap-6">
       <Stepper />
       <form onSubmit={onSubmit} className="grid gap-4 max-w-lg">
-        <PhoneInput {...register("employee.mobile")} error={errors.employee?.mobile?.message} />
+        <PhoneInput {...register("employee.mobile")} error={errors.employee?.mobile?.message as string | undefined} />
         <OtpInput />
         <div className="grid gap-1">
           <label className="text-sm font-medium">Name</label>
@@ -60,7 +60,7 @@ function Demo() {
             "address.city": errors.address?.city,
             "address.state": errors.address?.state,
             "address.pincode": errors.address?.pincode,
-          } as any} />
+          }} />
         ) : null}
         <div className="flex gap-3">
           <GiftCard title="Chocolate Hamper" onSelect={() => { onGiftSelect("g1", "physical"); setGiftModal(true); }} />

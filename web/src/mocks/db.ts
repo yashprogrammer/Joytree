@@ -1,4 +1,4 @@
-import type { Address, Campaign, Company, Employee, GiftOption, Order } from "@/types";
+import type { Campaign, Company, Employee, GiftOption, Order } from "@/types";
 
 export const companies: Company[] = [
   { id: "c1", name: "Joytree", slug: "joytree" },

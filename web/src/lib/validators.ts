@@ -1,5 +1,5 @@
 import { z } from "zod";
-import type { Address, Employee, GiftOption } from "@/types";
+import type { Address } from "@/types";
 
 export const mobileSchema = z
   .string()
@@ -15,7 +15,7 @@ export const pincodeSchema = z
 const emptyToUndefinedString = () =>
   z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), z.string().optional());
 
-export const addressSchema: z.ZodType<Address> = z.object({
+export const addressSchema = z.object({
   recipientName: z
     .string()
     .min(2, "Full name is required")
@@ -39,9 +39,7 @@ export const addressSchema: z.ZodType<Address> = z.object({
   addressType: z.enum(["home", "office", "other"]).optional(),
 });
 
-export const employeeSchema: z.ZodType<
-  Pick<Employee, "name" | "email" | "empId" | "mobile">
-> = z.object({
+export const employeeSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: emailSchema,
   empId: z.string().optional(),

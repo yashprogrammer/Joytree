@@ -1,11 +1,15 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { toCsv } from "@/lib/csv";
+import type { Order } from "@/types";
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<any[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
   useEffect(() => {
-    fetch("/api/orders").then((r) => r.json()).then((d) => setOrders(d.orders ?? [])).catch(() => setOrders([]));
+    fetch("/api/orders")
+      .then((r) => r.json())
+      .then((d: { orders?: Order[] }) => setOrders(d.orders ?? []))
+      .catch(() => setOrders([]));
   }, []);
 
   const csv = useMemo(() => toCsv(orders), [orders]);

@@ -14,7 +14,6 @@ type Props = {
 };
 
 export default function ConfirmDetailsModal({ open, mobile, name, email, empId, addressSummary, onEdit, onConfirm, onClose }: Props) {
-  if (!open) return null;
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -52,6 +51,8 @@ export default function ConfirmDetailsModal({ open, mobile, name, email, empId, 
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
+
+  if (!open) return null;
 
   return (
     <div role="dialog" aria-modal className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>

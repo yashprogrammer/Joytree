@@ -1,6 +1,9 @@
+import type { UseFormRegister } from "react-hook-form";
+import type { OrderInput } from "@/lib/validators";
+
 type Props = {
-  register: any;
-  errors?: Record<string, { message?: string }>;
+  register: UseFormRegister<OrderInput>;
+  errors?: Record<string, { message?: string } | undefined>;
 };
 
 export default function AddressForm({ register, errors = {} }: Props) {

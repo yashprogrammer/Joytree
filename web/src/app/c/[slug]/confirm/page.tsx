@@ -4,13 +4,14 @@ import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/lib/session";
 // import { apiPost } from "@/lib/api";
+import type { Address } from "@/types";
 
 type OrderInput = {
   campaignSlug: string;
   giftId: string;
   selectedGiftType?: "physical" | "digital";
   employee: { name: string; email: string; empId?: string; mobile: string };
-  address?: { line1: string; line2?: string; city: string; state: string; pincode: string };
+  address?: Address;
 };
 
 export default function ConfirmPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -62,12 +63,13 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
           // helpful extras for the summary screen
           status: "PLACED",
           campaign: { slug, title: slug },
-        } as any;
+        };
         window.localStorage.setItem(`joytree_order_${mockId}`, JSON.stringify(order));
       }
       router.push(`/order/${mockId}/summary`);
-    } catch (e: any) {
-      setError(e?.message || "Failed to place order");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Failed to place order";
+      setError(msg);
     } finally {
       setLoading(false);
     }
