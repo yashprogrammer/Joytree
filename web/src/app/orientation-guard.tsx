@@ -49,10 +49,10 @@ export default function OrientationGuard() {
   if (!guardActive || !showOverlay) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] bg-black text-white flex items-center justify-center p-6 text-center">
-      <div className="max-w-md grid gap-3">
-        <h1 className="text-2xl font-bold">Please rotate your device</h1>
-        <p className="text-sm text-gray-200">This step is best experienced in landscape. Rotate your phone to continue.</p>
+    <div className="fixed inset-0 z-[9999] bg-[var(--surface-light)] text-[var(--foreground)] flex items-center justify-center p-6 text-center">
+      <div className="max-w-md grid gap-3 bg-white rounded-xl p-6 shadow">
+        <h1 className="text-2xl font-medium">Please rotate your device</h1>
+        <p className="text-sm muted">This step is best experienced in landscape. Rotate your phone to continue.</p>
       </div>
     </div>
   );

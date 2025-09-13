@@ -11,7 +11,7 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
 ) {
   return (
     <div className="grid gap-1">
-      <label htmlFor={id} className="text-sm font-medium">
+      <label htmlFor={id} className="label">
         {label}
       </label>
       <input
@@ -23,7 +23,7 @@ const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
         placeholder="9876543210"
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
-        className="border p-2 rounded w-full"
+        className="input"
         {...rest}
       />
       {error ? (
