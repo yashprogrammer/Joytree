@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import PhoneInput from "@/components/PhoneInput";
 import OtpInput from "@/components/OtpInput";
@@ -8,9 +8,9 @@ import { apiPost } from "@/lib/api";
 import { setToken } from "@/lib/session";
 import { mobileSchema } from "@/lib/validators";
 
-export default function AuthPage({ params }: { params: { slug: string } }) {
+export default function AuthPage({ params }: { params: Promise<{ slug: string }> }) {
   const router = useRouter();
-  const { slug } = params;
+  const { slug } = use(params);
 
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState("");

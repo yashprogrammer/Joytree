@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { use, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/lib/session";
 
-export default function CampaignVideoPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default function CampaignVideoPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement | null>(null);
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { use, useEffect } from "react";
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -22,8 +22,8 @@ type AddressForm = {
   addressType?: "home" | "office" | "other";
 };
 
-export default function AddressPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+export default function AddressPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = use(params);
   const router = useRouter();
 
   // Auth guard

@@ -1,24 +1,25 @@
 "use client";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
-export default function OrderSummaryPage({ params }: { params: { id: string } }) {
+export default function OrderSummaryPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [data, setData] = useState<any>(null);
   const [error, setError] = useState<string>("");
   useEffect(() => {
     // Try to read from local storage (mock order placed on confirm page)
     try {
-      const local = typeof window !== "undefined" ? window.localStorage.getItem(`joytree_order_${params.id}`) : null;
+      const local = typeof window !== "undefined" ? window.localStorage.getItem(`joytree_order_${id}`) : null;
       if (local) {
         setData(JSON.parse(local));
         return;
       }
     } catch {}
     // Fallback to API
-    fetch(`/api/orders/${params.id}`)
+    fetch(`/api/orders/${id}`)
       .then((r) => r.json())
       .then(setData)
       .catch((e) => setError(String(e)));
-  }, [params.id]);
+  }, [id]);
   return (
     <div className="p-6 grid gap-4 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold">Thank you!</h1>
