@@ -216,9 +216,9 @@ Components
 - `VideoPlayer`: play/embed `campaign.videoUrl`; expose “I’ve watched”/Continue.
 
 Todos
-- [ ] Build each component with props and aria attributes.
+- [x] Build each component with props and aria attributes.
 - [ ] Ensure keyboard navigation and focus trap in modals.
-- [ ] Integrate with RHF + Zod for inline errors.
+- [x] Integrate with RHF + Zod for inline errors.
 
 ---
 
@@ -232,10 +232,10 @@ Pages
 - `/admin/orders`: table of mock orders + Download CSV using `/lib/csv.ts`.
 
 Todos
-- [ ] Implement `/c/[slug]` page with the stepper steps in order.
-- [ ] Fetch campaign + gifts for slug; handle loading/empty states.
-- [ ] Implement summary page fetching `/api/orders/[id]`.
-- [ ] Implement admin page listing orders with a “Download CSV” button.
+- [x] Implement `/c/[slug]` page with the stepper steps in order.
+- [x] Fetch campaign + gifts for slug; handle loading/empty states.
+- [x] Implement summary page fetching `/api/orders/[id]`.
+- [x] Implement admin page listing orders with a “Download CSV” button.
 
 ---
 
@@ -249,10 +249,10 @@ Rules
 - Video step is mandatory before moving forward.
 
 Todos
-- [ ] Client-side duplicate prevention (disable Place Order if already placed in session).
-- [ ] Mock handler returns 409 for duplicate; surface error in UI.
-- [ ] Conditional address validation wired to selected gift type.
-- [ ] Video must be acknowledged before enabling next step.
+- [x] Client-side duplicate prevention (disable Place Order if already placed in session).
+- [x] Mock handler returns 409 for duplicate; surface error in UI.
+- [x] Conditional address validation wired to selected gift type.
+- [x] Video must be acknowledged before enabling next step.
 
 ---
 
@@ -261,10 +261,10 @@ Todos
 Goal: Ensure a11y and smooth UX.
 
 Todos
-- [ ] All interactive elements have labels and roles.
-- [ ] Modals have focus trap and ESC/overlay close behavior (where appropriate).
-- [ ] Forms have inline error messages and aria-describedby.
-- [ ] Images have alt text; Video has accessible controls.
+- [x] All interactive elements have labels and roles.
+- [x] Modals have focus trap and ESC/overlay close behavior (where appropriate).
+- [x] Forms have inline error messages and aria-describedby.
+- [x] Images have alt text; Video has accessible controls.
 - [ ] Keyboard-only flow validated end-to-end.
 
 ---
@@ -357,14 +357,14 @@ Gate E — Stepper & components
 - [ ] Core components functional and accessible.
 
 Gate F — Pages wired
-- [ ] `/c/[slug]` flows through all steps.
-- [ ] `/order/[id]/summary` displays joined data.
-- [ ] `/admin/orders` lists orders and exports CSV.
+- [x] `/c/[slug]` flows through all steps.
+- [x] `/order/[id]/summary` displays joined data.
+- [x] `/admin/orders` lists orders and exports CSV.
 
 Gate G — Rules enforced
-- [ ] Duplicate order blocked (client + 409 UI error).
-- [ ] Address required for physical gifts.
-- [ ] Video step mandatory.
+- [x] Duplicate order blocked (client + 409 UI error).
+- [x] Address required for physical gifts.
+- [x] Video step mandatory.
 
 Gate H — Deploy
 - [ ] App deployed on Vercel; flow works end-to-end.

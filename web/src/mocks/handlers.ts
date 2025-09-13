@@ -68,6 +68,10 @@ export const handlers = [
     return HttpResponse.json({ orderId });
   }),
 
+  http.get("/api/orders", async () => {
+    return HttpResponse.json({ orders });
+  }),
+
   http.get("/api/orders/:id", async ({ params }) => {
     const { id } = params as { id: string };
     const order = orders.find((o) => o.id === id);

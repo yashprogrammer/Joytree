@@ -1,5 +1,40 @@
-export default function PhoneInput() {
-  return <input className="border p-2 rounded w-full" placeholder="Mobile" />;
-}
+import { forwardRef } from "react";
+
+type Props = React.InputHTMLAttributes<HTMLInputElement> & {
+  label?: string;
+  error?: string;
+};
+
+const PhoneInput = forwardRef<HTMLInputElement, Props>(function PhoneInput(
+  { id = "mobile", label = "Mobile", error, ...rest },
+  ref
+) {
+  return (
+    <div className="grid gap-1">
+      <label htmlFor={id} className="text-sm font-medium">
+        {label}
+      </label>
+      <input
+        ref={ref}
+        id={id}
+        type="tel"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        placeholder="9876543210"
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : undefined}
+        className="border p-2 rounded w-full"
+        {...rest}
+      />
+      {error ? (
+        <p id={`${id}-error`} className="text-sm text-red-600">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+});
+
+export default PhoneInput;
 
 
