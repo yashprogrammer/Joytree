@@ -52,12 +52,12 @@ export default function GiftModal({ open, title, description, imageUrl, onConfir
 
   return (
     <div role="dialog" aria-modal className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>
-      <div ref={panelRef} className="bg-white rounded p-4 max-w-md w-full" onClick={(e) => e.stopPropagation()} tabIndex={-1}>
+      <div ref={panelRef} className="bg-white text-black rounded p-4 max-w-md w-full" onClick={(e) => e.stopPropagation()} tabIndex={-1}>
         {imageUrl ? <img src={imageUrl} alt="" className="w-full h-44 object-cover mb-3" /> : null}
         <h2 className="text-xl font-semibold mb-1">{title}</h2>
-        {description ? <p className="text-sm text-gray-600 mb-3">{description}</p> : null}
+        {description ? <p className="text-sm text-gray-700 mb-3">{description}</p> : null}
         <div className="flex justify-end gap-2">
-          <button className="px-3 py-2 border rounded" onClick={onClose}>Cancel</button>
+          <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={onClose}>Cancel</button>
           <button className="px-3 py-2 border rounded bg-black text-white" onClick={onConfirm}>Confirm</button>
         </div>
       </div>

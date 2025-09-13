@@ -3,8 +3,8 @@ export async function GET(
   context: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await context.params;
-  // Forward to MSW by simply returning shape; MSW will intercept
-  return Response.json({ gifts: [], campaign: { id: "", slug, title: "" } });
+  // Delegate to MSW in development; this endpoint remains as a safety net
+  return Response.json({ gifts: [], campaign: { id: `cmp-${slug}`, slug, title: slug } });
 }
 
 

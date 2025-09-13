@@ -5,15 +5,12 @@ import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useStepper } from "@/components/StepperContext";
 import Stepper from "@/components/Stepper";
-import PhoneInput from "@/components/PhoneInput";
-import OtpInput from "@/components/OtpInput";
 import AddressForm from "@/components/AddressForm";
 import GiftCard from "@/components/GiftCard";
 import GiftModal from "@/components/GiftModal";
 import ConfirmDetailsModal from "@/components/ConfirmDetailsModal";
-import VideoPlayer from "@/components/VideoPlayer";
 import { apiGet, apiPost } from "@/lib/api";
-import { setToken } from "@/lib/session";
+import { getToken } from "@/lib/session";
 import { orderInputSchema, type OrderInput } from "@/lib/validators";
 
 type Gift = { id: string; title: string; imageUrl: string; type: "physical" | "digital" };
@@ -23,7 +20,6 @@ export default function ClientFlow({ slug }: { slug: string }) {
   const router = useRouter();
   const {
     setFormValid,
-    setVideoWatched,
     setSelectedGiftId,
     setSelectedGiftType,
     setAddressProvided,
@@ -36,8 +32,8 @@ export default function ClientFlow({ slug }: { slug: string }) {
   const [giftModalOpen, setGiftModalOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedGift, setSelectedGift] = useState<Gift | null>(null);
-  const [authError, setAuthError] = useState<string>("");
   const [orderError, setOrderError] = useState<string>("");
+  const [isAuthed, setIsAuthed] = useState(false);
 
   const { register, handleSubmit, formState: { errors, isValid }, watch, setValue } = useForm<OrderInput>({
     resolver: zodResolver(orderInputSchema) as unknown as Resolver<OrderInput>,
@@ -53,6 +49,25 @@ export default function ClientFlow({ slug }: { slug: string }) {
   useEffect(() => {
     setFormValid(isValid);
   }, [isValid, setFormValid]);
+
+  // Ensure authenticated; otherwise redirect to auth page
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      router.replace(`/c/${slug}/auth`);
+    } else {
+      setIsAuthed(true);
+    }
+  }, [router, slug]);
+
+  // Prefill mobile from localStorage if available (set by auth page)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const storedMobile = window.localStorage.getItem("joytree_mobile");
+    if (storedMobile) {
+      setValue("employee.mobile", storedMobile, { shouldValidate: true });
+    }
+  }, [setValue]);
 
   const addr = watch("address");
   useEffect(() => {
@@ -72,33 +87,7 @@ export default function ClientFlow({ slug }: { slug: string }) {
       });
   }, [slug]);
 
-  const onRequestOtp = async () => {
-    setAuthError("");
-    try {
-      await apiPost("/api/auth/request-otp", { mobile: watch("employee.mobile"), campaignSlug: slug });
-    } catch (e: any) {
-      setAuthError(e.message || "Failed to request OTP");
-    }
-  };
-
-  const onVerifyOtp = async (code: string) => {
-    setAuthError("");
-    try {
-      const res = await apiPost<{ token: string }>("/api/auth/verify-otp", { mobile: watch("employee.mobile"), code });
-      setToken(res.token);
-    } catch (e: any) {
-      setAuthError(e.message || "Invalid OTP");
-    }
-  };
-
-  const onVerifyEmail = async () => {
-    setAuthError("");
-    try {
-      await apiPost("/api/auth/verify-email", { email: watch("employee.email"), campaignSlug: slug });
-    } catch (e: any) {
-      setAuthError(e.message || "Failed to verify email");
-    }
-  };
+  
 
   const onSelectGift = (gift: Gift) => {
     setSelectedGift(gift);
@@ -140,27 +129,16 @@ export default function ClientFlow({ slug }: { slug: string }) {
 
   const selectedType = watch("selectedGiftType");
 
-  return (
+  return isAuthed ? (
     <div className="grid gap-6">
       <Stepper />
-      <section aria-labelledby="auth" className="grid gap-3">
-        <h2 id="auth" className="text-lg font-semibold">Auth</h2>
-        {authError ? <p className="text-red-600 text-sm">{authError}</p> : null}
-        <PhoneInput {...register("employee.mobile")} error={errors.employee?.mobile?.message} />
-        <div className="flex gap-2">
-          <button type="button" className="px-3 py-2 border rounded" onClick={onRequestOtp}>Request OTP</button>
-          <button type="button" className="px-3 py-2 border rounded" onClick={() => onVerifyOtp((document.getElementById("otp") as HTMLInputElement)?.value || "")}>Verify OTP</button>
-        </div>
-        <OtpInput id="otp" />
+
+      <section aria-labelledby="form" className="grid gap-3">
+        <h2 id="form" className="text-lg font-semibold">Form</h2>
         <div className="grid gap-1">
           <label className="text-sm font-medium">Company Email</label>
           <input className="border p-2 rounded" {...register("employee.email")} />
         </div>
-        <button type="button" className="px-3 py-2 border rounded w-fit" onClick={onVerifyEmail}>Verify Email</button>
-      </section>
-
-      <section aria-labelledby="form" className="grid gap-3">
-        <h2 id="form" className="text-lg font-semibold">Form</h2>
         <div className="grid gap-1">
           <label className="text-sm font-medium">Name</label>
           <input className="border p-2 rounded" {...register("employee.name")} />
@@ -172,11 +150,6 @@ export default function ClientFlow({ slug }: { slug: string }) {
         {selectedType === "physical" ? (
           <AddressForm register={register} errors={addressErrors as any} />
         ) : null}
-      </section>
-
-      <section aria-labelledby="video" className="grid gap-3">
-        <h2 id="video" className="text-lg font-semibold">Video</h2>
-        <VideoPlayer src={campaign?.videoUrl || "https://www.w3schools.com/html/mov_bbb.mp4"} onAcknowledged={() => setVideoWatched(true)} />
       </section>
 
       <section aria-labelledby="gifts" className="grid gap-3">
@@ -216,7 +189,7 @@ export default function ClientFlow({ slug }: { slug: string }) {
         onClose={() => setConfirmOpen(false)}
       />
     </div>
-  );
+  ) : null;
 }
 
 

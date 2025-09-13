@@ -28,9 +28,9 @@ export const handlers = [
 
   http.get("/api/campaigns/:slug/gifts", async ({ params }) => {
     const { slug } = params as { slug: string };
-    const campaign = campaigns.find((c) => c.slug === slug);
-    if (!campaign) return HttpResponse.json({ gifts: [], campaign: null });
-    const campaignGifts = gifts.filter((g) => g.campaignId === campaign.id);
+    const existing = campaigns.find((c) => c.slug === slug);
+    const campaign = existing ?? ({ id: `mock_${slug}`, slug, title: slug, companyId: "c1", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" } as any);
+    const campaignGifts = existing ? gifts.filter((g) => g.campaignId === campaign.id) : gifts;
     return HttpResponse.json({ gifts: campaignGifts, campaign });
   }),
 

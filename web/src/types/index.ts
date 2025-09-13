@@ -24,11 +24,19 @@ export type Employee = {
   empId?: string;
 };
 export type Address = {
+  // Recipient info
+  recipientName?: string;
+  phone?: string;
+  email?: string;
   line1: string;
   line2?: string;
   city: string;
   state: string;
   pincode: string;
+  country?: string;
+  alternatePhone?: string;
+  landmark?: string;
+  addressType?: "home" | "office" | "other";
 };
 export type Order = {
   id: string;
