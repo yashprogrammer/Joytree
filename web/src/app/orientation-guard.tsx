@@ -29,9 +29,9 @@ export default function OrientationGuard() {
 
     // Best-effort orientation lock (only works on supported browsers and often requires a user gesture)
     try {
-      const anyScreen = (screen as any);
-      if (anyScreen?.orientation?.lock) {
-        anyScreen.orientation.lock("landscape").catch(() => {});
+      const scr = screen as unknown as { orientation?: { lock?: (o: "landscape" | "portrait") => Promise<void> } };
+      if (scr?.orientation?.lock) {
+        scr.orientation.lock("landscape").catch(() => {});
       }
     } catch {}
 

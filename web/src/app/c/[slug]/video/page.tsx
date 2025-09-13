@@ -20,10 +20,11 @@ export default function CampaignVideoPage({ params }: { params: Promise<{ slug: 
     if (!v) return;
     const preventSeek = (e: Event) => {
       const target = e.target as HTMLVideoElement;
-      target.currentTime = Math.min(target.currentTime, (window as any).__lastTime || 0);
+      const lastTime = (window as unknown as { __lastTime?: number }).__lastTime ?? 0;
+      target.currentTime = Math.min(target.currentTime, lastTime);
     };
     const trackTime = () => {
-      (window as any).__lastTime = v.currentTime;
+      (window as unknown as { __lastTime?: number }).__lastTime = v.currentTime;
     };
     v.addEventListener("seeking", preventSeek);
     v.addEventListener("timeupdate", trackTime);

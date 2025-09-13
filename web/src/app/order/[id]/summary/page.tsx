@@ -1,9 +1,21 @@
 "use client";
 import { use, useEffect, useState } from "react";
+import Link from "next/link";
+import type { Address } from "@/types";
 
 export default function OrderSummaryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const [data, setData] = useState<any>(null);
+  type OrderSummaryData = {
+    id: string;
+    gift?: { title?: string } | null;
+    giftId?: string;
+    campaign?: { title?: string } | null;
+    campaignSlug?: string;
+    status?: string;
+    address?: Address;
+  };
+
+  const [data, setData] = useState<OrderSummaryData | null>(null);
   const [error, setError] = useState<string>("");
   useEffect(() => {
     // Try to read from local storage (mock order placed on confirm page)
@@ -17,7 +29,7 @@ export default function OrderSummaryPage({ params }: { params: Promise<{ id: str
     // Fallback to API
     fetch(`/api/orders/${id}`)
       .then((r) => r.json())
-      .then(setData)
+      .then((d: unknown) => setData(d as OrderSummaryData))
       .catch((e) => setError(String(e)));
   }, [id]);
   return (
@@ -53,7 +65,7 @@ export default function OrderSummaryPage({ params }: { params: Promise<{ id: str
           ) : null}
         </div>
       )}
-      <a className="px-3 py-2 border rounded w-fit" href="/">Go to home</a>
+      <Link className="px-3 py-2 border rounded w-fit" href="/">Go to home</Link>
     </div>
   );
 }

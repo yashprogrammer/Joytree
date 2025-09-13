@@ -23,7 +23,7 @@ async function request<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, { ...init, headers });
   const data = (await safeJson(res)) as T;
   if (!res.ok) {
-    const error = (data as any)?.error ?? res.statusText;
+    const error = (data && typeof data === "object" && "error" in data) ? (data as { error?: unknown }).error : res.statusText;
     throw new Error(typeof error === "string" ? error : `HTTP ${res.status}`);
   }
   return data;
