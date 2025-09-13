@@ -6,7 +6,7 @@ export default function Stepper() {
   return (
     <ol className="flex items-center gap-3" aria-label="Steps">
       {STEPS.map((s) => (
-        <li key={s} className={`text-sm ${s === currentStep ? "font-bold" : "text-gray-500"}`}>{s}</li>
+        <li key={s} className={`text-sm ${s === currentStep ? "font-bold text-[var(--color-foreground)]" : "text-[var(--color-muted)]"}`}>{s}</li>
       ))}
     </ol>
   );

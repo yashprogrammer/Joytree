@@ -1,6 +1,6 @@
-import { forwardRef } from "react";
+import { forwardRef, type InputHTMLAttributes } from "react";
 
-type Props = React.InputHTMLAttributes<HTMLInputElement> & {
+type Props = InputHTMLAttributes<HTMLInputElement> & {
   label?: string;
   error?: string;
 };
@@ -11,7 +11,7 @@ const OtpInput = forwardRef<HTMLInputElement, Props>(function OtpInput(
 ) {
   return (
     <div className="grid gap-1">
-      <label htmlFor={id} className="text-sm font-medium">
+      <label htmlFor={id} className="text-sm font-medium text-[var(--color-foreground)]">
         {label}
       </label>
       <input
@@ -23,11 +23,11 @@ const OtpInput = forwardRef<HTMLInputElement, Props>(function OtpInput(
         placeholder="123456"
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : undefined}
-        className="border p-2 rounded w-full tracking-widest text-center"
+        className="border border-[var(--color-border)] p-2 rounded w-full tracking-widest text-center bg-[var(--color-surface)] focus:outline-none focus:ring-2 focus:ring-[var(--color-brand)]"
         {...rest}
       />
       {error ? (
-        <p id={`${id}-error`} className="text-sm text-red-600">
+        <p id={`${id}-error`} className="text-sm text-[var(--color-danger)]">
           {error}
         </p>
       ) : null}

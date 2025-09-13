@@ -55,20 +55,20 @@ export default function ConfirmDetailsModal({ open, mobile, name, email, empId, 
 
   return (
     <div role="dialog" aria-modal className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>
-      <div ref={panelRef} className="bg-white rounded p-4 max-w-md w-full" onClick={(e) => e.stopPropagation()} tabIndex={-1}>
-        <h2 className="text-xl font-semibold mb-3">Confirm your details</h2>
+      <div ref={panelRef} className="bg-[var(--color-surface)] rounded p-4 max-w-md w-full shadow-sm" onClick={(e) => e.stopPropagation()} tabIndex={-1}>
+        <h2 className="text-xl font-semibold mb-3 text-[var(--color-foreground)]">Confirm your details</h2>
         <dl className="text-sm grid gap-1 mb-3">
-          <div className="flex justify-between"><dt className="text-gray-600">Mobile</dt><dd>{mobile}</dd></div>
-          <div className="flex justify-between"><dt className="text-gray-600">Name</dt><dd>{name}</dd></div>
-          <div className="flex justify-between"><dt className="text-gray-600">Email</dt><dd>{email}</dd></div>
-          {empId ? <div className="flex justify-between"><dt className="text-gray-600">Emp ID</dt><dd>{empId}</dd></div> : null}
-          {addressSummary ? <div className="flex justify-between"><dt className="text-gray-600">Address</dt><dd>{addressSummary}</dd></div> : null}
+          <div className="flex justify-between"><dt className="text-[var(--color-muted)]">Mobile</dt><dd>{mobile}</dd></div>
+          <div className="flex justify-between"><dt className="text-[var(--color-muted)]">Name</dt><dd>{name}</dd></div>
+          <div className="flex justify-between"><dt className="text-[var(--color-muted)]">Email</dt><dd>{email}</dd></div>
+          {empId ? <div className="flex justify-between"><dt className="text-[var(--color-muted)]">Emp ID</dt><dd>{empId}</dd></div> : null}
+          {addressSummary ? <div className="flex justify-between"><dt className="text-[var(--color-muted)]">Address</dt><dd>{addressSummary}</dd></div> : null}
         </dl>
         <div className="flex justify-between">
-          <button className="px-3 py-2 border rounded" onClick={onEdit}>Edit</button>
+          <button className="px-3 py-2 border border-[var(--color-border)] rounded hover:bg-[var(--color-brand)]/5" onClick={onEdit}>Edit</button>
           <div className="flex gap-2">
-            <button className="px-3 py-2 border rounded" onClick={onClose}>Cancel</button>
-            <button className="px-3 py-2 border rounded bg-black text-white" onClick={onConfirm}>Place order</button>
+            <button className="px-3 py-2 border border-[var(--color-border)] rounded hover:bg-[var(--color-brand)]/5" onClick={onClose}>Cancel</button>
+            <button className="px-3 py-2 rounded bg-[var(--color-brand)] text-[var(--color-brand-foreground)] hover:opacity-95" onClick={onConfirm}>Place order</button>
           </div>
         </div>
       </div>
