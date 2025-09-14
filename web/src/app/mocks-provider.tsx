@@ -1,9 +1,9 @@
 "use client";
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { enableMocking } from "@/mocks/browser";
 
 export default function ClientMocks() {
-  useEffect(() => {
+  useLayoutEffect(() => {
     enableMocking();
   }, []);
   return null;
