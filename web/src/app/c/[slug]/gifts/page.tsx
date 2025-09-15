@@ -62,6 +62,19 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
 
   const onConfirm = () => {};
 
+  // Use Front.jpg images from public/Products for the first four gifts
+  const frontImages = [
+    "/Products/Calander/Front.jpg",
+    "/Products/Eye%20Massager/Front.jpg",
+    "/Products/Smart%20watch/Front.jpg",
+    "/Products/Water%20bottle/front.jpg",
+  ];
+
+  const displayGifts = gifts.slice(0, 4).map((g, i) => ({
+    ...g,
+    imageUrl: frontImages[i],
+  }));
+
   return (
     <div className="p-6 grid gap-6">
       <div className="grid gap-2">
@@ -70,7 +83,7 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
       </div>
 
       <div className="grid grid-cols-4 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 justify-items-center">
-        {gifts.map((g) => (
+        {displayGifts.map((g) => (
           <GiftCard
             key={g.id}
             title={g.title}
