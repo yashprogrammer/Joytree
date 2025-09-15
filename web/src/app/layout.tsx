@@ -50,14 +50,12 @@ export default function RootLayout({
       <body className={`${jost.variable} ${sacramento.variable} ${geistMono.variable} antialiased`}>
         <ClientMocks />
         <OrientationGuard />
-        <header className="w-full bg-white/70 backdrop-blur border-b border-[color-mix(in_oklab,var(--brand-secondary)_15%,transparent)]">
-          <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-            <Link href="/">
-              <Image src="/JoytreeLogo.png" alt="Joytree" width={140} height={48} priority />
-            </Link>
-          </div>
-        </header>
-        <main className="min-h-[calc(100dvh-70px)]">
+        <div className="px-2 pt-2">
+          <Link href="/" aria-label="Joytree Home">
+            <Image src="/JoytreeLogo.png" alt="Joytree" width={96} height={24} priority />
+          </Link>
+        </div>
+        <main className="min-h-[100dvh]">
           {children}
         </main>
       </body>

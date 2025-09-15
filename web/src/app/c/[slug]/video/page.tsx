@@ -106,7 +106,7 @@ export default function CampaignVideoPage({ params }: { params: Promise<{ slug: 
     <div className="fixed inset-0 bg-[var(--surface-light)]">
       <button
         type="button"
-        className="absolute top-4 right-4 z-10 px-4 py-2 rounded btn btn-outline-secondary"
+        className="absolute bottom-4 right-4 z-10 px-4 py-2 rounded btn btn-outline-secondary"
         onClick={() => router.push(`/c/${slug}/gifts`)}
         aria-label="Skip video"
       >

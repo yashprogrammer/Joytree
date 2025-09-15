@@ -35,7 +35,7 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
   const gift = useMemo(() => {
     if (typeof window === "undefined") return null;
     const raw = window.localStorage.getItem("joytree_selected_gift");
-    return raw ? (JSON.parse(raw) as { id: string; type: "physical" | "digital" }) : null;
+    return raw ? (JSON.parse(raw) as { id: string; type: "physical" | "digital"; title?: string; imageUrl?: string; description?: string }) : null;
   }, []);
 
   const address = useMemo(() => {
@@ -91,8 +91,14 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
 
         <div className="grid gap-2 border rounded-lg p-4 bg-white">
           <h2 className="text-lg font-semibold text-gray-900">Gift</h2>
-          <div className="text-sm text-gray-800">Gift ID: {gift?.id}</div>
-          <div className="text-sm text-gray-800">Type: {gift?.type}</div>
+          {gift?.imageUrl ? (
+            <div className="w-full aspect-square grid place-items-center bg-white border rounded">
+              <img src={gift.imageUrl} alt="" className="object-contain" style={{ width: "70%", height: "70%" }} />
+            </div>
+          ) : null}
+          {gift?.description ? (
+            <p className="text-sm text-gray-700 leading-relaxed">{gift.description}</p>
+          ) : null}
         </div>
 
         {gift?.type === "physical" && address ? (

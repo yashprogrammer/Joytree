@@ -83,6 +83,8 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
         open={loginOpen}
         title="Enter your mobile"
         onClose={() => setLoginOpen(false)}
+        disableBackdropClose
+        disableEscapeClose
         footer={
           <>
             <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => setLoginOpen(false)}>Close</button>
@@ -105,6 +107,8 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
         open={otpOpen}
         title="Enter OTP"
         onClose={() => setOtpOpen(false)}
+        disableBackdropClose
+        disableEscapeClose
         footer={
           <>
             <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => { setOtpOpen(false); setLoginOpen(true); }}>Back</button>
