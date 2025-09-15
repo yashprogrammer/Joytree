@@ -76,42 +76,44 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
   };
 
   return (
-    <div className="p-6 grid gap-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold">Confirm your details</h1>
+    <div className="p-6 grid gap-6 max-w-5xl mx-auto">
+      <h1 className="text-2xl font-bold text-gray-900">Confirm your details</h1>
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
-      <div className="grid gap-2">
-        <h2 className="text-lg font-semibold">Employee</h2>
-        <div className="text-sm">Name: {employee?.name}</div>
-        <div className="text-sm">Email: {employee?.email}</div>
-        {employee?.empId ? <div className="text-sm">Employee ID: {employee.empId}</div> : null}
-        <div className="text-sm">Mobile: {employee?.mobile}</div>
-      </div>
-
-      <div className="grid gap-2">
-        <h2 className="text-lg font-semibold">Gift</h2>
-        <div className="text-sm">Gift ID: {gift?.id}</div>
-        <div className="text-sm">Type: {gift?.type}</div>
-      </div>
-
-      {gift?.type === "physical" && address ? (
-        <div className="grid gap-2">
-          <h2 className="text-lg font-semibold">Address</h2>
-          <div className="text-sm">{address.recipientName} ({address.phone})</div>
-          {address.email ? <div className="text-sm">{address.email}</div> : null}
-          <div className="text-sm">{address.line1}</div>
-          {address.line2 ? <div className="text-sm">{address.line2}</div> : null}
-          <div className="text-sm">{address.city}, {address.state} {address.pincode}</div>
-          <div className="text-sm">{address.country}</div>
-          {address.landmark ? <div className="text-sm">Landmark: {address.landmark}</div> : null}
-          {address.alternatePhone ? <div className="text-sm">Alt Phone: {address.alternatePhone}</div> : null}
-          {address.addressType ? <div className="text-sm">Type: {address.addressType}</div> : null}
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-2 border rounded-lg p-4 bg-white">
+          <h2 className="text-lg font-semibold text-gray-900">Employee</h2>
+          <div className="text-sm text-gray-800">Name: {employee?.name}</div>
+          <div className="text-sm text-gray-800">Email: {employee?.email}</div>
+          {employee?.empId ? <div className="text-sm text-gray-800">Employee ID: {employee.empId}</div> : null}
+          <div className="text-sm text-gray-800">Mobile: {employee?.mobile}</div>
         </div>
-      ) : null}
+
+        <div className="grid gap-2 border rounded-lg p-4 bg-white">
+          <h2 className="text-lg font-semibold text-gray-900">Gift</h2>
+          <div className="text-sm text-gray-800">Gift ID: {gift?.id}</div>
+          <div className="text-sm text-gray-800">Type: {gift?.type}</div>
+        </div>
+
+        {gift?.type === "physical" && address ? (
+          <div className="md:col-span-2 grid gap-2 border rounded-lg p-4 bg-white">
+            <h2 className="text-lg font-semibold text-gray-900">Address</h2>
+            <div className="text-sm text-gray-800">{address.recipientName} ({address.phone})</div>
+            {address.email ? <div className="text-sm text-gray-800">{address.email}</div> : null}
+            <div className="text-sm text-gray-800">{address.line1}</div>
+            {address.line2 ? <div className="text-sm text-gray-800">{address.line2}</div> : null}
+            <div className="text-sm text-gray-800">{address.city}, {address.state} {address.pincode}</div>
+            <div className="text-sm text-gray-800">{address.country}</div>
+            {address.landmark ? <div className="text-sm text-gray-800">Landmark: {address.landmark}</div> : null}
+            {address.alternatePhone ? <div className="text-sm text-gray-800">Alt Phone: {address.alternatePhone}</div> : null}
+            {address.addressType ? <div className="text-sm text-gray-800">Type: {address.addressType}</div> : null}
+          </div>
+        ) : null}
+      </div>
 
       <div className="flex gap-2">
-        <button className="px-3 py-2 border rounded" onClick={() => router.push(`/c/${slug}/gifts`)}>Back</button>
-        <button className="px-3 py-2 border rounded bg-black text-white disabled:opacity-50" onClick={placeOrder} disabled={loading}>
+        <button className="btn btn-outline-primary" onClick={() => router.push(`/c/${slug}/gifts`)}>Back</button>
+        <button className="btn btn-primary disabled:opacity-50" onClick={placeOrder} disabled={loading}>
           {loading ? "Placing..." : "Place Order"}
         </button>
       </div>
