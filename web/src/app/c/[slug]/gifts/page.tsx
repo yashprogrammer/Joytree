@@ -64,7 +64,7 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
         {campaign?.title ? <p className="text-sm text-gray-600">Campaign: {campaign.title}</p> : null}
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
         {gifts.map((g) => (
           <GiftCard key={g.id} title={g.title} imageUrl={g.imageUrl} onSelect={() => onSelect(g)} />
         ))}

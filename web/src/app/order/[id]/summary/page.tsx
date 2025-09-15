@@ -1,5 +1,5 @@
 "use client";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Address } from "@/types";
 
@@ -32,6 +32,32 @@ export default function OrderSummaryPage({ params }: { params: Promise<{ id: str
       .then((d: unknown) => setData(d as OrderSummaryData))
       .catch((e) => setError(String(e)));
   }, [id]);
+
+  // Prevent/back-redirect logic: do not allow navigating back away from Thank You.
+  // If the user attempts to go back, push them to OTP login for the campaign.
+  const slugRef = useRef<string | null>(null);
+  useEffect(() => {
+    slugRef.current = data?.campaignSlug || undefined as unknown as string | null;
+  }, [data]);
+
+  useEffect(() => {
+    // Push a new state so the first back hits our handler
+    const pushDummy = () => {
+      try {
+        history.pushState({ noBackFromSummary: true }, "");
+      } catch {}
+    };
+    pushDummy();
+
+    const onPopState = () => {
+      const slug = slugRef.current || (data?.campaign?.title ? String(data?.campaign?.title) : data?.campaignSlug) || "";
+      const target = slug ? `/c/${slug}/auth` : "/c/demo/auth";
+      location.replace(target);
+    };
+
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [data]);
   return (
     <div className="p-6 grid gap-4 max-w-4xl mx-auto">
       <h1 className="text-2xl font-bold text-gray-900">Thank you!</h1>
