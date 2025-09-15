@@ -19,6 +19,7 @@ export default function DetailsPage({ params }: { params: Promise<{ slug: string
   const router = useRouter();
 
   const [error, setError] = useState<string>("");
+  const [mobileFromStorage, setMobileFromStorage] = useState<string>("");
   
 
   // Auth guard
@@ -29,27 +30,41 @@ export default function DetailsPage({ params }: { params: Promise<{ slug: string
     }
   }, [router, slug]);
 
-  const storedMobile = typeof window !== "undefined" ? window.localStorage.getItem("joytree_mobile") || "" : "";
-  const storedEmployee = typeof window !== "undefined" ? window.localStorage.getItem("joytree_employee") : null;
-  const parsedEmployee = storedEmployee ? ((): Partial<EmployeeForm> => {
-    try { return JSON.parse(storedEmployee) as Partial<EmployeeForm>; } catch { return {}; }
-  })() : {};
-
   const { register, handleSubmit, formState: { errors, isValid }, setValue, reset } = useForm<EmployeeForm>({
     resolver: zodResolver(employeeSchema) as Resolver<EmployeeForm>,
     mode: "onChange",
     defaultValues: {
-      name: parsedEmployee.name || "",
-      email: parsedEmployee.email || "",
-      empId: parsedEmployee.empId || "",
-      mobile: storedMobile,
+      name: "",
+      email: "",
+      empId: "",
+      mobile: "",
     },
   });
 
   useEffect(() => {
-    // Ensure mobile is set from storage for validation
-    if (storedMobile) setValue("mobile", storedMobile, { shouldValidate: true });
-  }, [setValue, storedMobile]);
+    // Read from localStorage on client after hydration
+    if (typeof window === "undefined") return;
+    const mob = window.localStorage.getItem("joytree_mobile") || "";
+    setMobileFromStorage(mob);
+
+    const storedEmployee = window.localStorage.getItem("joytree_employee");
+    if (storedEmployee) {
+      try {
+        const parsed = JSON.parse(storedEmployee) as Partial<EmployeeForm>;
+        reset({
+          name: parsed.name || "",
+          email: parsed.email || "",
+          empId: parsed.empId || "",
+          mobile: mob || parsed.mobile || "",
+        });
+      } catch {
+        // ignore
+        setValue("mobile", mob, { shouldValidate: true });
+      }
+    } else {
+      setValue("mobile", mob, { shouldValidate: true });
+    }
+  }, [reset, setValue]);
 
   const onSubmit = handleSubmit(async (data) => {
     setError("");
@@ -73,7 +88,7 @@ export default function DetailsPage({ params }: { params: Promise<{ slug: string
     if (typeof window !== "undefined") {
       window.localStorage.removeItem("joytree_employee");
     }
-    reset({ name: "", email: "", empId: "", mobile: storedMobile });
+    reset({ name: "", email: "", empId: "", mobile: mobileFromStorage });
     setError("");
   };
 
@@ -86,7 +101,7 @@ export default function DetailsPage({ params }: { params: Promise<{ slug: string
 
       {error ? <p className="text-red-600 text-sm">{error}</p> : null}
       <div className="grid gap-1">
-          <label className="text-sm font-medium">Mobile (verified): {storedMobile}</label>
+          <label className="text-sm font-medium" suppressHydrationWarning>Mobile (verified): {mobileFromStorage}</label>
           <input type="hidden" {...register("mobile")} />
         </div>
       

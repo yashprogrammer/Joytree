@@ -4,6 +4,7 @@ import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import PhoneInput from "@/components/PhoneInput";
 import OtpInput from "@/components/OtpInput";
+import Modal from "@/components/Modal";
 import { apiPost } from "@/lib/api";
 import { setToken } from "@/lib/session";
 import { mobileSchema } from "@/lib/validators";
@@ -18,6 +19,9 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string>("");
   const [message, setMessage] = useState<string>("");
+
+  const [loginOpen, setLoginOpen] = useState(true);
+  const [otpOpen, setOtpOpen] = useState(false);
 
   const isMobileValid = (() => {
     try {
@@ -42,6 +46,8 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
       }
       setOtpRequested(true);
       setMessage("OTP sent successfully");
+      setLoginOpen(false);
+      setOtpOpen(true);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to request OTP";
       setError(msg);
@@ -72,47 +78,53 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
 
   return (
     <div className="min-h-[60vh] grid place-items-center p-6">
-      <div className="w-full max-w-md grid gap-6 bg-[var(--surface-beige)] p-6 rounded-2xl shadow-sm">
-        <div className="grid gap-2 text-center">
-          <h1 className="text-2xl font-medium">Verify your mobile</h1>
-          <p className="text-sm muted">Enter your mobile number to receive an OTP.</p>
-        </div>
+      <div className="text-center">
+        <h1 className="text-xl font-medium">Login to continue</h1>
+        <p className="text-sm text-gray-600">Follow the steps on the modals.</p>
+      </div>
 
+      <Modal
+        open={loginOpen}
+        title="Enter your mobile"
+        onClose={() => setLoginOpen(false)}
+        footer={
+          <>
+            <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => setLoginOpen(false)}>Close</button>
+            <button className="btn btn-secondary disabled:opacity-50" onClick={requestOtp} disabled={!canRequestOtp}>
+              {loading ? "Sending..." : "Send OTP"}
+            </button>
+          </>
+        }
+      >
         {error ? <p className="text-red-600 text-sm">{error}</p> : null}
         {message ? <p className="text-green-700 text-sm">{message}</p> : null}
+        <PhoneInput
+          value={mobile}
+          onChange={(e) => setMobile(e.target.value)}
+          error={!mobile || isMobileValid ? undefined : "Enter a valid 10-digit Indian mobile number"}
+        />
+      </Modal>
 
-        <div className="grid gap-3">
-          <PhoneInput
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            error={!mobile || isMobileValid ? undefined : "Enter a valid 10-digit Indian mobile number"}
-          />
-          <button
-            type="button"
-            className="btn btn-secondary"
-            onClick={requestOtp}
-            disabled={!canRequestOtp}
-          >
-            {loading ? "Sending..." : "Send OTP"}
-          </button>
-        </div>
-
-        <div className="grid gap-3">
-          <OtpInput
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            disabled={!otpRequested}
-          />
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={verifyOtp}
-            disabled={!canVerifyOtp}
-          >
-            {loading ? "Verifying..." : "Verify OTP"}
-          </button>
-        </div>
-      </div>
+      <Modal
+        open={otpOpen}
+        title="Enter OTP"
+        onClose={() => setOtpOpen(false)}
+        footer={
+          <>
+            <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => { setOtpOpen(false); setLoginOpen(true); }}>Back</button>
+            <button className="btn btn-primary disabled:opacity-50" onClick={verifyOtp} disabled={!canVerifyOtp}>
+              {loading ? "Verifying..." : "Verify OTP"}
+            </button>
+          </>
+        }
+      >
+        {error ? <p className="text-red-600 text-sm">{error}</p> : null}
+        <OtpInput
+          value={otp}
+          onChange={(e) => setOtp(e.target.value)}
+          disabled={!otpRequested}
+        />
+      </Modal>
     </div>
   );
 }
