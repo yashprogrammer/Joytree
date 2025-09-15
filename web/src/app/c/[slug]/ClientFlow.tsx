@@ -150,7 +150,7 @@ export default function ClientFlow({ slug }: { slug: string }) {
 
       <section aria-labelledby="gifts" className="grid gap-3">
         <h2 id="gifts" className="text-lg font-semibold">Gifts</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-4 gap-2 sm:grid-cols-4 md:grid-cols-5 justify-items-center">
           {gifts.map((g) => (
             <GiftCard key={g.id} title={g.title} imageUrl={g.imageUrl} onSelect={() => onSelectGift(g)} />
           ))}
