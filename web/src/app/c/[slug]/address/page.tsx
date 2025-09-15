@@ -67,90 +67,90 @@ export default function AddressPage({ params }: { params: Promise<{ slug: string
   };
 
   return (
-    <div className="p-6 grid gap-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold">Shipping address</h1>
+    <div className="p-6 grid gap-6 max-w-5xl mx-auto">
+      <h1 className="text-2xl font-bold text-gray-900">Shipping address</h1>
 
-      <form className="grid gap-4" onSubmit={onSubmit}>
+      <form className="grid gap-4 md:grid-cols-2" onSubmit={onSubmit}>
         <div className="grid gap-1">
-          <label className="text-sm font-medium">Full Name</label>
-          <input className="border p-2 rounded" {...register("recipientName")} />
+          <label className="text-sm font-medium text-gray-800">Full Name</label>
+          <input className="input" {...register("recipientName")} />
           {errors.recipientName?.message ? <p className="text-sm text-red-600">{errors.recipientName.message as string}</p> : null}
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">Mobile Number</label>
-          <input className="border p-2 rounded" {...register("phone")} />
+          <label className="text-sm font-medium text-gray-800">Mobile Number</label>
+          <input className="input" {...register("phone")} />
           {errors.phone?.message ? <p className="text-sm text-red-600">{errors.phone.message as string}</p> : null}
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">Email Address (optional)</label>
-          <input className="border p-2 rounded" {...register("email")} />
+          <label className="text-sm font-medium text-gray-800">Email Address (optional)</label>
+          <input className="input" {...register("email")} />
           {errors.email?.message ? <p className="text-sm text-red-600">{errors.email.message as string}</p> : null}
         </div>
 
-        <div className="grid gap-1">
-          <label className="text-sm font-medium">Address Line 1</label>
-          <input className="border p-2 rounded" {...register("line1")} />
+        <div className="grid gap-1 md:col-span-2">
+          <label className="text-sm font-medium text-gray-800">Address Line 1</label>
+          <input className="input" {...register("line1")} />
           {errors.line1?.message ? <p className="text-sm text-red-600">{errors.line1.message as string}</p> : null}
         </div>
 
-        <div className="grid gap-1">
-          <label className="text-sm font-medium">Address Line 2 (optional)</label>
-          <input className="border p-2 rounded" {...register("line2")} />
+        <div className="grid gap-1 md:col-span-2">
+          <label className="text-sm font-medium text-gray-800">Address Line 2 (optional)</label>
+          <input className="input" {...register("line2")} />
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">City / District</label>
-          <input className="border p-2 rounded" {...register("city")} />
+          <label className="text-sm font-medium text-gray-800">City / District</label>
+          <input className="input" {...register("city")} />
           {errors.city?.message ? <p className="text-sm text-red-600">{errors.city.message as string}</p> : null}
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">State / Region</label>
-          <input className="border p-2 rounded" {...register("state")} />
+          <label className="text-sm font-medium text-gray-800">State / Region</label>
+          <input className="input" {...register("state")} />
           {errors.state?.message ? <p className="text-sm text-red-600">{errors.state.message as string}</p> : null}
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">Postal Code / Pincode</label>
-          <input className="border p-2 rounded" {...register("pincode")} />
+          <label className="text-sm font-medium text-gray-800">Postal Code / Pincode</label>
+          <input className="input" {...register("pincode")} />
           {errors.pincode?.message ? <p className="text-sm text-red-600">{errors.pincode.message as string}</p> : null}
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">Country</label>
-          <input className="border p-2 rounded" {...register("country")} />
+          <label className="text-sm font-medium text-gray-800">Country</label>
+          <input className="input" {...register("country")} />
           {errors.country?.message ? <p className="text-sm text-red-600">{errors.country.message as string}</p> : null}
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">Alternate Phone (optional)</label>
-          <input className="border p-2 rounded" {...register("alternatePhone")} />
+          <label className="text-sm font-medium text-gray-800">Alternate Phone (optional)</label>
+          <input className="input" {...register("alternatePhone")} />
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">Landmark (optional)</label>
-          <input className="border p-2 rounded" {...register("landmark")} />
+          <label className="text-sm font-medium text-gray-800">Landmark (optional)</label>
+          <input className="input" {...register("landmark")} />
         </div>
 
         <div className="grid gap-1">
-          <label className="text-sm font-medium">Address Type</label>
-          <select className="border p-2 rounded" {...register("addressType")}>
+          <label className="text-sm font-medium text-gray-800">Address Type</label>
+          <select className="input" {...register("addressType")}> 
             <option value="home">Home</option>
             <option value="office">Office</option>
             <option value="other">Other</option>
           </select>
         </div>
 
-        <div className="flex gap-2">
-          <button type="submit" className="px-3 py-2 border rounded bg-black text-white disabled:opacity-50" disabled={!isValid}>
+        <div className="md:col-span-2 flex gap-2 pt-2">
+          <button type="submit" className="btn btn-primary" disabled={!isValid}>
             Save & Continue
           </button>
-          <button type="button" className="px-3 py-2 border rounded" onClick={onReset}>
+          <button type="button" className="btn btn-outline-secondary" onClick={onReset}>
             Reset
           </button>
-          <button type="button" className="ml-auto px-3 py-2 border rounded" onClick={() => router.push(`/c/${slug}/gifts`)}>
+          <button type="button" className="ml-auto btn btn-outline-primary" onClick={() => router.push(`/c/${slug}/gifts`)}>
             Back
           </button>
         </div>

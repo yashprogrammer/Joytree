@@ -78,10 +78,6 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
 
   return (
     <div className="min-h-[60vh] grid place-items-center p-6">
-      <div className="text-center">
-        <h1 className="text-xl font-medium">Login to continue</h1>
-        <p className="text-sm text-gray-600">Follow the steps on the modals.</p>
-      </div>
 
       <Modal
         open={loginOpen}
