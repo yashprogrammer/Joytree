@@ -8,9 +8,11 @@ type Props = {
   onClose: () => void;
   footer?: React.ReactNode;
   children: React.ReactNode;
+  disableBackdropClose?: boolean;
+  disableEscapeClose?: boolean;
 };
 
-export default function Modal({ open, title, onClose, footer, children }: Props) {
+export default function Modal({ open, title, onClose, footer, children, disableBackdropClose, disableEscapeClose }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export default function Modal({ open, title, onClose, footer, children }: Props)
     function onKey(e: KeyboardEvent) {
       if (e.key === "Escape") {
         e.preventDefault();
-        onClose();
+        if (!disableEscapeClose) onClose();
         return;
       }
       if (e.key === "Tab" && focusable && focusable.length > 0) {
@@ -47,12 +49,12 @@ export default function Modal({ open, title, onClose, footer, children }: Props)
 
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [open, onClose, disableEscapeClose]);
 
   if (!open) return null;
 
   return (
-    <div role="dialog" aria-modal className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>
+    <div role="dialog" aria-modal className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={disableBackdropClose ? undefined : onClose}>
       <div ref={panelRef} className="bg-white text-black rounded p-4 max-w-md w-full" onClick={(e) => e.stopPropagation()} tabIndex={-1}>
         {title ? <h2 className="text-xl font-semibold mb-3">{title}</h2> : null}
         <div className="grid gap-3">

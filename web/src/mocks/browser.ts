@@ -7,6 +7,25 @@ export async function enableMocking() {
   const { handlers } = await import("./handlers");
   const worker = setupWorker(...handlers);
   await worker.start({ serviceWorker: { url: "/mockServiceWorker.js" } });
+  (window as unknown as { __mswReady?: boolean }).__mswReady = true;
+}
+
+export async function waitForMocksReady(timeoutMs = 3000): Promise<boolean> {
+  if (typeof window === "undefined") return true;
+  const win = window as unknown as { __mswReady?: boolean };
+  if (win.__mswReady) return true;
+  const start = Date.now();
+  return new Promise((resolve) => {
+    const interval = setInterval(() => {
+      if (win.__mswReady) {
+        clearInterval(interval);
+        resolve(true);
+      } else if (Date.now() - start > timeoutMs) {
+        clearInterval(interval);
+        resolve(false);
+      }
+    }, 25);
+  });
 }
 
 
