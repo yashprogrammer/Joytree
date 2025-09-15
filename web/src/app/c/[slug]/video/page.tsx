@@ -49,10 +49,28 @@ export default function CampaignVideoPage({ params }: { params: Promise<{ slug: 
     };
     v.addEventListener("ended", onEnded);
 
+    // Listen for orientation overlay visibility to pause/resume
+    const onOverlayToggle = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { visible?: boolean } | undefined;
+      if (!detail) return;
+      if (detail.visible) {
+        // overlay shown -> pause
+        try { v.pause(); } catch {}
+      } else {
+        // overlay hidden -> resume
+        const resume = async () => {
+          try { await v.play(); } catch {}
+        };
+        resume();
+      }
+    };
+    window.addEventListener("joytree:orientation-overlay", onOverlayToggle as EventListener);
+
     return () => {
       v.removeEventListener("seeking", preventSeek);
       v.removeEventListener("timeupdate", trackTime);
       v.removeEventListener("ended", onEnded);
+      window.removeEventListener("joytree:orientation-overlay", onOverlayToggle as EventListener);
     };
   }, [router, slug]);
 
