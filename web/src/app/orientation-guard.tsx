@@ -12,18 +12,23 @@ function isLandscape(): boolean {
 export default function OrientationGuard() {
   const pathname = usePathname();
   const [showOverlay, setShowOverlay] = useState(false);
+  const eventName = "joytree:orientation-overlay";
 
-  // Guard is active for steps after details: video, gifts, address, confirm, summary
+  // Guard is active only on video and gifts pages
   const guardActive = useMemo(() => {
     if (!pathname) return false;
-    if (pathname.startsWith("/c/") && (pathname.includes("/video") || pathname.includes("/gifts") || pathname.includes("/address") || pathname.includes("/confirm"))) return true;
-    if (pathname.startsWith("/order/")) return true;
+    if (pathname.startsWith("/c/") && (pathname.includes("/video") || pathname.includes("/gifts"))) return true;
     return false;
   }, [pathname]);
 
   useEffect(() => {
     if (!guardActive) {
       setShowOverlay(false);
+      if (typeof window !== "undefined") {
+        try {
+          window.dispatchEvent(new CustomEvent(eventName, { detail: { visible: false } }));
+        } catch {}
+      }
       return;
     }
 
@@ -35,7 +40,17 @@ export default function OrientationGuard() {
       }
     } catch {}
 
-    const update = () => setShowOverlay(!isLandscape());
+    const update = () => {
+      const next = !isLandscape();
+      setShowOverlay((prev) => {
+        if (prev !== next) {
+          try {
+            window.dispatchEvent(new CustomEvent(eventName, { detail: { visible: next } }));
+          } catch {}
+        }
+        return next;
+      });
+    };
     update();
     const mm = typeof window !== "undefined" ? window.matchMedia?.("(orientation: portrait)") : null;
     mm?.addEventListener?.("change", update);
