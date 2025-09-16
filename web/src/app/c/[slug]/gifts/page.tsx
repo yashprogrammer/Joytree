@@ -6,6 +6,7 @@ import { apiGet } from "@/lib/api";
 import { waitForMocksReady } from "@/mocks/browser";
 import { getToken } from "@/lib/session";
 import GiftCard from "@/components/GiftCard";
+import Image from "next/image";
 // GiftModal removed in favor of dedicated details page
 
 type Gift = { id: string; title: string; imageUrl?: string; description?: string; type: "physical" | "digital" };
@@ -76,34 +77,43 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
   }));
 
   // Landscape placement controls (percentages of container width/height)
-  const standLeftPercents = [17, 38.5, 60, 82];
-  const standTopPercents = [25, 25, 25, 25]; // adjust each entry to fine-tune vertical alignment
+  const standLeftPercents = [19, 39, 59, 80];
+  const standTopPercents = [25, 26, 25, 23.5]; // adjust each entry to fine-tune vertical alignment
+  const standWidthPercents = [32, 32, 40, 80]; // width of each square tile as % of image width
 
   return (
-    <div className="relative min-h-screen bg-[url('/bg.jpeg')] bg-cover bg-center">
-      {/* Centered heading, a bit lower */}
-      <div className="absolute left-1/2 -translate-x-1/2 top-[8vh] text-center">
-        <h1 className="text-3xl md:text-4xl font-bold">Choose your gift</h1>
-      </div>
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Center frame that preserves BG aspect ratio and scales to fit viewport */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="relative aspect-[8/5]"
+          style={{ width: "max(100vw, calc(100vh * 1.6))" }}
+        >
+          <Image src="/bg.jpeg" alt="" fill priority className="object-contain" />
 
-      {/* Landscape precise placement over stands */}
-      <div className="hidden landscape:block">
-        {displayGifts.map((g, i) => {
-          const left = `${standLeftPercents[i] ?? 18}%`;
-          const top = `${standTopPercents[i] ?? 25}%`;
-          return (
-            <div key={g.id} className="absolute -translate-x-1/2" style={{ left, top }}>
-              <button onClick={() => onSelect(g)} aria-label={`Select gift ${g.title}`} className="group block text-center focus:outline-none">
-                <div className="mx-auto rounded aspect-square w-[clamp(120px,17vw,280px)] grid place-items-center">
-                  {g.imageUrl ? <img src={g.imageUrl} alt="" className="object-contain w-[95%] h-[95%]" /> : null}
+          {/* Centered heading inside the frame */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-[8%] text-center">
+            <h1 className="text-3xl md:text-4xl font-bold">Choose your gift</h1>
+          </div>
+
+          {/* Landscape precise placement over stands within the frame */}
+          <div className="hidden landscape:block">
+            {displayGifts.map((g, i) => {
+              const left = `${standLeftPercents[i] ?? 18}%`;
+              const top = `${standTopPercents[i] ?? 25}%`;
+              const width = `${standWidthPercents[i] ?? 17}%`;
+              return (
+                <div key={g.id} className="absolute -translate-x-1/2" style={{ left, top }}>
+                  <button onClick={() => onSelect(g)} aria-label={`Select gift ${g.title}`} className="group block text-center focus:outline-none">
+                    <div className="mx-auto rounded aspect-square grid place-items-center" style={{ width }}>
+                      {g.imageUrl ? <img src={g.imageUrl} alt="" className="object-contain" /> : null}
+                    </div>
+                  </button>
                 </div>
-                <div className="mt-4 md:mt-5 text-[11px] md:text-sm font-medium text-gray-900 max-w-[clamp(120px,17vw,220px)] mx-auto">
-                  {g.title}
-                </div>
-              </button>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       {/* Portrait fallback: simple grid (orientation guard should keep users in landscape) */}
