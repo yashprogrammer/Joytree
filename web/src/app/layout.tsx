@@ -3,8 +3,7 @@ import { Geist_Mono, Jost, Sacramento } from "next/font/google";
 import "./globals.css";
 import ClientMocks from "./mocks-provider";
 import OrientationGuard from "./orientation-guard";
-import Image from "next/image";
-import Link from "next/link";
+import Header from "@/components/Header";
 
 const jost = Jost({
   variable: "--font-jost",
@@ -50,11 +49,7 @@ export default function RootLayout({
       <body className={`${jost.variable} ${sacramento.variable} ${geistMono.variable} antialiased`}>
         <ClientMocks />
         <OrientationGuard />
-        <div className="px-2 pt-2">
-          <Link href="/" aria-label="Joytree Home">
-            <Image src="/JoytreeLogo.png" alt="Joytree" width={96} height={24} priority />
-          </Link>
-        </div>
+        <Header />
         <main className="min-h-[100dvh]">
           {children}
         </main>

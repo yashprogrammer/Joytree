@@ -75,25 +75,48 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
     imageUrl: frontImages[i],
   }));
 
+  // Landscape placement controls (percentages of container width/height)
+  const standLeftPercents = [17, 38.5, 60, 82];
+  const standTopPercents = [25, 25, 25, 25]; // adjust each entry to fine-tune vertical alignment
+
   return (
-    <div className="p-6 grid gap-6">
-      <div className="grid gap-2">
-        <h1 className="text-2xl font-bold">Choose your gift</h1>
-        {campaign?.title ? <p className="text-sm text-gray-600">Campaign: {campaign.title}</p> : null}
+    <div className="relative min-h-screen bg-[url('/bg.jpeg')] bg-cover bg-center">
+      {/* Centered heading, a bit lower */}
+      <div className="absolute left-1/2 -translate-x-1/2 top-[8vh] text-center">
+        <h1 className="text-3xl md:text-4xl font-bold">Choose your gift</h1>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 justify-items-center">
-        {displayGifts.map((g) => (
-          <GiftCard
-            key={g.id}
-            title={g.title}
-            imageUrl={g.imageUrl}
-            onSelect={() => onSelect(g)}
-          />
-        ))}
+      {/* Landscape precise placement over stands */}
+      <div className="hidden landscape:block">
+        {displayGifts.map((g, i) => {
+          const left = `${standLeftPercents[i] ?? 18}%`;
+          const top = `${standTopPercents[i] ?? 25}%`;
+          return (
+            <div key={g.id} className="absolute -translate-x-1/2" style={{ left, top }}>
+              <button onClick={() => onSelect(g)} aria-label={`Select gift ${g.title}`} className="group block text-center focus:outline-none">
+                <div className="mx-auto rounded aspect-square w-[clamp(120px,17vw,280px)] grid place-items-center">
+                  {g.imageUrl ? <img src={g.imageUrl} alt="" className="object-contain w-[95%] h-[95%]" /> : null}
+                </div>
+                <div className="mt-4 md:mt-5 text-[11px] md:text-sm font-medium text-gray-900 max-w-[clamp(120px,17vw,220px)] mx-auto">
+                  {g.title}
+                </div>
+              </button>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Modal removed; dedicated details page handles confirmation */}
+      {/* Portrait fallback: simple grid (orientation guard should keep users in landscape) */}
+      <div className="p-6 grid gap-6 landscape:hidden">
+        <div className="grid gap-2 text-center">
+          <h2 className="text-xl font-bold">Choose your gift</h2>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 justify-items-center">
+          {displayGifts.map((g) => (
+            <GiftCard key={g.id} title={g.title} imageUrl={g.imageUrl} onSelect={() => onSelect(g)} />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
