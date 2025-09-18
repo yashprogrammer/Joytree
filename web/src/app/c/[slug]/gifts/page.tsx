@@ -6,6 +6,7 @@ import { apiGet } from "@/lib/api";
 import { waitForMocksReady } from "@/mocks/browser";
 import { getToken } from "@/lib/session";
 import GiftCard from "@/components/GiftCard";
+import Image from "next/image";
 // GiftModal removed in favor of dedicated details page
 
 type Gift = { id: string; title: string; imageUrl?: string; description?: string; type: "physical" | "digital" };
@@ -75,25 +76,57 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
     imageUrl: frontImages[i],
   }));
 
+  // Landscape placement controls (percentages of container width/height)
+  const standLeftPercents = [19, 39, 59, 80];
+  const standTopPercents = [25, 26, 25, 23.5]; // adjust each entry to fine-tune vertical alignment
+  const standWidthPercents = [32, 32, 40, 80]; // width of each square tile as % of image width
+
   return (
-    <div className="p-6 grid gap-6">
-      <div className="grid gap-2">
-        <h1 className="text-2xl font-bold">Choose your gift</h1>
-        {campaign?.title ? <p className="text-sm text-gray-600">Campaign: {campaign.title}</p> : null}
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Center frame that preserves BG aspect ratio and scales to fit viewport */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="relative aspect-[8/5]"
+          style={{ width: "max(100vw, calc(100vh * 1.6))" }}
+        >
+          <Image src="/bg.jpeg" alt="" fill priority className="object-contain" />
+
+          {/* Centered heading inside the frame */}
+          <div className="absolute left-1/2 -translate-x-1/2 top-[8%] text-center">
+            <h1 className="text-3xl md:text-4xl font-bold">Choose your gift</h1>
+          </div>
+
+          {/* Landscape precise placement over stands within the frame */}
+          <div className="hidden landscape:block">
+            {displayGifts.map((g, i) => {
+              const left = `${standLeftPercents[i] ?? 18}%`;
+              const top = `${standTopPercents[i] ?? 25}%`;
+              const width = `${standWidthPercents[i] ?? 17}%`;
+              return (
+                <div key={g.id} className="absolute -translate-x-1/2" style={{ left, top }}>
+                  <button onClick={() => onSelect(g)} aria-label={`Select gift ${g.title}`} className="group block text-center focus:outline-none">
+                    <div className="mx-auto rounded aspect-square grid place-items-center" style={{ width }}>
+                      {g.imageUrl ? <img src={g.imageUrl} alt="" className="object-contain" /> : null}
+                    </div>
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 justify-items-center">
-        {displayGifts.map((g) => (
-          <GiftCard
-            key={g.id}
-            title={g.title}
-            imageUrl={g.imageUrl}
-            onSelect={() => onSelect(g)}
-          />
-        ))}
+      {/* Portrait fallback: simple grid (orientation guard should keep users in landscape) */}
+      <div className="p-6 grid gap-6 landscape:hidden">
+        <div className="grid gap-2 text-center">
+          <h2 className="text-xl font-bold">Choose your gift</h2>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 justify-items-center">
+          {displayGifts.map((g) => (
+            <GiftCard key={g.id} title={g.title} imageUrl={g.imageUrl} onSelect={() => onSelect(g)} />
+          ))}
+        </div>
       </div>
-
-      {/* Modal removed; dedicated details page handles confirmation */}
     </div>
   );
 }
