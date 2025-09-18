@@ -79,10 +79,14 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
   // Landscape placement controls (percentages of container width/height)
   const standLeftPercents = [19, 39, 59, 80];
   const standTopPercents = [25, 26, 25, 23.5]; // adjust each entry to fine-tune vertical alignment
-  const standWidthPercents = [32, 32, 40, 80]; // width of each square tile as % of image width
+  const standWidthPercents = [80, 80, 80, 80]; // width of each square tile as % of image width
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+      {/* Viewport-positioned heading */}
+      <div className="fixed left-1/2 -translate-x-1/2 top-[clamp(24px,10vh,96px)] z-20 text-center px-4 pointer-events-none">
+        <h1 className="font-bold text-[clamp(20px,4vh,32px)]">Choose your Gift</h1>
+      </div>
       {/* Center frame that preserves BG aspect ratio and scales to fit viewport */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div
@@ -91,10 +95,7 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
         >
           <Image src="/bg.jpeg" alt="" fill priority className="object-contain" />
 
-          {/* Centered heading inside the frame */}
-          <div className="absolute left-1/2 -translate-x-1/2 top-[8%] text-center">
-            <h1 className="text-3xl md:text-4xl font-bold">Choose your gift</h1>
-          </div>
+          {/* Heading moved to viewport-fixed container */}
 
           {/* Landscape precise placement over stands within the frame */}
           <div className="hidden landscape:block">
@@ -106,7 +107,14 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
                 <div key={g.id} className="absolute -translate-x-1/2" style={{ left, top }}>
                   <button onClick={() => onSelect(g)} aria-label={`Select gift ${g.title}`} className="group block text-center focus:outline-none">
                     <div className="mx-auto rounded aspect-square grid place-items-center" style={{ width }}>
-                      {g.imageUrl ? <img src={g.imageUrl} alt="" className="object-contain" /> : null}
+                      {g.imageUrl ? (
+                        <img
+                          src={g.imageUrl}
+                          alt=""
+                          className="object-contain"
+                          style={{ width: "min(clamp(160px, 18vw, 220px), 100%)", height: "min(clamp(160px, 18vw, 220px), 100%)" }}
+                        />
+                      ) : null}
                     </div>
                   </button>
                 </div>
@@ -117,10 +125,7 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
       </div>
 
       {/* Portrait fallback: simple grid (orientation guard should keep users in landscape) */}
-      <div className="p-6 grid gap-6 landscape:hidden">
-        <div className="grid gap-2 text-center">
-          <h2 className="text-xl font-bold">Choose your gift</h2>
-        </div>
+      <div className="p-6 pt-[clamp(56px,12vh,112px)] grid gap-6 landscape:hidden">
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 justify-items-center">
           {displayGifts.map((g) => (
             <GiftCard key={g.id} title={g.title} imageUrl={g.imageUrl} onSelect={() => onSelect(g)} />
