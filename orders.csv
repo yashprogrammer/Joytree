@@ -1,0 +1,6 @@
+orderId,createdAt,campaignSlug,giftId,giftTitle,giftImageUrl,selectedGiftType,employeeName,employeeEmail,employeeEmpId,employeeMobile,addressLine1,addressLine2,addressCity,addressState,addressPincode
+"ord_test","2025-09-19T00:00:00.000Z","diwali-2025","g1","Test Gift","/test.jpg","physical","Test User","test@example.com","E1","9999999999","Line 1","","City","State","123456"
+"ord_1","2025-09-19T06:45:16.888Z","diwali","g4","Silver Rocket Shape Pen Holder","/Products/penHolder.jpg","physical","Ravi pal","yashstudy02@gmail.com","","9144986986","102","","Indore","MP","452006"
+"ord_1","2025-09-19T06:45:56.281Z","diwali","g1","Vego Hydrating Sip Bottle","/Products/bottle.webp","physical","Ravi pal","yashstudy02@gmail.com","","9144986986","102","","Indore","MP","452006"
+"ord_1","2025-09-19T06:46:17.868Z","demo","g3","All-in-One Allure Desk Organizer","/Products/organizer.webp","physical","Ravi pal","yashstudy02@gmail.com","","9144986986","102","","Indore","MP","452006"
+"ord_1","2025-09-19T06:49:28.036Z","diwali","g3","All-in-One Allure Desk Organizer","/Products/organizer.webp","physical","Ravi pal","yashstudy02@gmail.com","","9893009524","102","","Indore","MP","452006"

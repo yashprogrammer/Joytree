@@ -42,10 +42,13 @@ export const handlers = [
       address?: { line1: string; line2?: string; city: string; state: string; pincode: string };
     };
     const { campaignSlug, giftId, employee, address } = body;
-    const campaign = campaigns.find((c) => c.slug === campaignSlug);
-    if (!campaign) return HttpResponse.json({ error: "NOT_FOUND" }, { status: 404 });
-    const gift = gifts.find((g) => g.id === giftId && g.campaignId === campaign.id);
-    if (!gift) return HttpResponse.json({ error: "NOT_FOUND" }, { status: 404 });
+    const existingCampaign = campaigns.find((c) => c.slug === campaignSlug);
+    const campaign = existingCampaign ?? { id: `mock_${campaignSlug}`, slug: campaignSlug, title: campaignSlug, companyId: "c1", videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4" };
+    let gift = existingCampaign ? gifts.find((g) => g.id === giftId && g.campaignId === campaign.id) : gifts.find((g) => g.id === giftId);
+    if (!gift) {
+      // Fallback: accept unknown gift id for ad-hoc campaigns and proceed
+      gift = { id: giftId, campaignId: campaign.id, title: giftId, imageUrl: "", type: "physical" } as unknown as (typeof gifts)[number];
+    }
 
     // ensure employee exists
     let existing = employees.find((e) => e.mobile === employee.mobile);
@@ -61,6 +64,7 @@ export const handlers = [
     }
 
     const orderId = `ord_${orders.length + 1}`;
+    const createdAt = new Date().toISOString();
     orders.push({
       id: orderId,
       campaignId: campaign.id,
@@ -68,8 +72,24 @@ export const handlers = [
       giftId: gift.id,
       address: gift.type === "physical" ? address ?? undefined : undefined,
       status: "PLACED",
-      createdAt: new Date().toISOString(),
+      createdAt,
     });
+    // Fire-and-forget append to server CSV via internal API
+    fetch("/api/internal/append-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: orderId,
+        createdAt,
+        campaignSlug,
+        giftId: gift.id,
+        selectedGiftType: gift.type,
+        employee,
+        address,
+        giftTitle: gift.title,
+        giftImageUrl: gift.imageUrl,
+      }),
+    }).catch(() => void 0);
     return HttpResponse.json({ orderId });
   }),
 

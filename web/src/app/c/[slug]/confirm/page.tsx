@@ -3,7 +3,7 @@
 import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/lib/session";
-// import { apiPost } from "@/lib/api";
+import { apiPost } from "@/lib/api";
 import type { Address } from "@/types";
 
 type OrderInput = {
@@ -49,24 +49,14 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
     setError("");
     setLoading(true);
     try {
-      // Skip backend for now; generate a mock order id
-      const mockId = `ord_${Math.random().toString(36).slice(2, 10)}`;
-      // Persist a minimal order summary locally for the summary page
-      if (typeof window !== "undefined") {
-        const order: OrderInput & { id: string; status: string; campaign: { slug: string; title: string } } = {
-          id: mockId,
-          campaignSlug: slug,
-          giftId: gift.id,
-          selectedGiftType: gift.type,
-          employee,
-          address,
-          // helpful extras for the summary screen
-          status: "PLACED",
-          campaign: { slug, title: slug },
-        };
-        window.localStorage.setItem(`joytree_order_${mockId}`, JSON.stringify(order));
-      }
-      router.push(`/order/${mockId}/summary`);
+      const res = await apiPost<{ orderId: string }>("/api/orders", {
+        campaignSlug: slug,
+        giftId: gift.id,
+        selectedGiftType: gift.type,
+        employee,
+        address,
+      });
+      router.push(`/order/${res.orderId}/summary`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to place order";
       setError(msg);
