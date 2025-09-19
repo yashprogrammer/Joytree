@@ -51,6 +51,21 @@ export default function Modal({ open, title, onClose, footer, children, disableB
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose, disableEscapeClose]);
 
+  // Lock background scroll while modal is open
+  useEffect(() => {
+    if (!open) return;
+    const body = document.body;
+    const prevOverflow = body.style.overflow;
+    const prevPaddingRight = body.style.paddingRight;
+    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+    body.style.overflow = "hidden";
+    if (scrollBarWidth > 0) body.style.paddingRight = `${scrollBarWidth}px`;
+    return () => {
+      body.style.overflow = prevOverflow;
+      body.style.paddingRight = prevPaddingRight;
+    };
+  }, [open]);
+
   if (!open) return null;
 
   return (

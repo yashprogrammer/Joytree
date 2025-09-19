@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import Modal from "@/components/Modal";
 
 type Props = {
   open: boolean;
@@ -12,6 +13,7 @@ type Props = {
 
 export default function GiftModal({ open, title, description, imageUrl, onConfirm, onClose }: Props) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const [visualizeOpen, setVisualizeOpen] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -72,9 +74,37 @@ export default function GiftModal({ open, title, description, imageUrl, onConfir
         </div>
         <div className="mt-4 flex justify-center gap-2">
           <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={onClose}>Cancel</button>
+          <button className="px-3 py-2 border border-gray-300 rounded text-gray-800 inline-flex items-center gap-2" onClick={() => setVisualizeOpen(true)}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+              <path d="M3.27 6.96L12 12l8.73-5.04"/>
+              <path d="M12 22V12"/>
+            </svg>
+            Visualize
+          </button>
           <button className="px-3 py-2 border rounded bg-black text-white" onClick={onConfirm}>Confirm</button>
         </div>
       </div>
+      <Modal
+        open={visualizeOpen}
+        onClose={() => setVisualizeOpen(false)}
+        title="3D Visualizer"
+        footer={
+          <>
+            <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => setVisualizeOpen(false)}>Close</button>
+          </>
+        }
+      >
+        <div className="w-full" style={{ height: "70vh" }}>
+          <iframe
+            src={"https://www.pacdora.com/share?filter_url=psm6jeyq92"}
+            title="3D Model"
+            className="w-full h-full rounded border"
+            allow="accelerometer; gyroscope; magnetometer; fullscreen"
+            allowFullScreen
+          />
+        </div>
+      </Modal>
     </div>
   );
 }
