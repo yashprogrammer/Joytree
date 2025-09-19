@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { apiGet } from "@/lib/api";
 import { waitForMocksReady } from "@/mocks/browser";
 import { getToken } from "@/lib/session";
+import Modal from "@/components/Modal";
 
 type Gift = { id: string; title: string; imageUrl?: string; description?: string; type: "physical" | "digital" };
 type Campaign = { id: string; slug: string; title: string; videoUrl?: string };
@@ -15,6 +16,8 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
   const [gift, setGift] = useState<Gift | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [visualizeOpen, setVisualizeOpen] = useState(false);
+  const [visualizeUrl, setVisualizeUrl] = useState<string>("https://www.pacdora.com/share?filter_url=psm6jeyq92");
 
   // Auth guard
   useEffect(() => {
@@ -31,9 +34,20 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
       apiGet<{ gifts: Gift[]; campaign: Campaign }>(`/api/campaigns/${slug}/gifts`)
         .then((d) => {
           if (cancelled) return;
-          const found = (d.gifts || []).find((g) => g.id === giftId) || null;
+          const list = d.gifts || [];
+          const found = list.find((g) => g.id === giftId) || null;
           setGift(found);
           setError(found ? "" : "Gift not found");
+          const idx = list.findIndex((g) => g.id === giftId);
+          if (idx >= 0) {
+            if (idx < 2) {
+              setVisualizeUrl("https://www.pacdora.com/share?filter_url=psm6jeyq92");
+            } else if (idx < 4) {
+              setVisualizeUrl("https://www.pacdora.com/share?filter_url=psbqlf9yjt");
+            } else {
+              setVisualizeUrl("https://www.pacdora.com/share?filter_url=psm6jeyq92");
+            }
+          }
         })
         .catch(() => !cancelled && setError("Failed to load gift"))
         .finally(() => !cancelled && setLoading(false));
@@ -86,7 +100,15 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
               <p className="text-sm text-gray-700 leading-relaxed">{gift.description}</p>
             ) : null}
 
-            <div className="pt-2">
+            <div className="pt-2 flex gap-2">
+              <button className="btn btn-outline-primary inline-flex items-center gap-2" onClick={() => setVisualizeOpen(true)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                  <path d="M3.27 6.96L12 12l8.73-5.04"/>
+                  <path d="M12 22V12"/>
+                </svg>
+                Visualize
+              </button>
               <button className="btn btn-primary" onClick={onChoose}>
                 Choose
               </button>
@@ -94,6 +116,27 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
           </div>
         </div>
       )}
+ 
+      <Modal
+        open={visualizeOpen}
+        onClose={() => setVisualizeOpen(false)}
+        title="3D Visualizer"
+        footer={
+          <>
+            <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => setVisualizeOpen(false)}>Close</button>
+          </>
+        }
+      >
+        <div className="w-full" style={{height: "50vh" }}>
+          <iframe
+            src={visualizeUrl}
+            title="3D Model"
+            className="w-full h-full rounded border"
+            allow="accelerometer; gyroscope; magnetometer; fullscreen"
+            allowFullScreen
+          />
+        </div>
+      </Modal>
     </div>
   );
 }
