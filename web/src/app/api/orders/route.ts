@@ -38,7 +38,8 @@ export async function POST(request: Request) {
 
     return Response.json({ orderId });
   } catch (err) {
-    return Response.json({ error: "INTERNAL_ERROR" }, { status: 500 });
+    console.error("Error in POST /api/orders:", err);
+    return Response.json({ error: "INTERNAL_ERROR", details: err instanceof Error ? err.message : String(err) }, { status: 500 });
   }
 }
 

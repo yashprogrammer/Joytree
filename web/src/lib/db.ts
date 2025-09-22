@@ -72,8 +72,20 @@ async function runSql<T = unknown>(strings: TemplateStringsArray, ...values: unk
   } catch (err) {
     // Fallback to direct client if pooled connection string is not configured
     const code = typeof err === "object" && err && "code" in err ? (err as { code?: string }).code : undefined;
-    if (code !== "invalid_connection_string") throw err;
-    const client = createClient();
+    const msg = typeof err === "object" && err && "message" in err ? String((err as { message?: unknown }).message) : "";
+    const shouldFallback = code === "invalid_connection_string" || msg.includes("invalid_connection_string");
+    if (!shouldFallback) throw err;
+
+    const connectionString =
+      process.env.POSTGRES_URL_NON_POOLING ||
+      process.env.POSTGRES_PRISMA_URL ||
+      process.env.PRISMA_DATABASE_URL ||
+      process.env.DATABASE_URL ||
+      process.env.POSTGRES_URL ||
+      "";
+    if (!connectionString) throw new Error("DB connection string not set (POSTGRES_URL or POSTGRES_URL_NON_POOLING)");
+
+    const client = createClient({ connectionString });
     await client.connect();
     try {
       const result = await (client.sql as unknown as SqlTagged)<T>(strings, ...values);
