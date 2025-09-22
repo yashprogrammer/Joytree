@@ -27,19 +27,19 @@ export const gifts: GiftOption[] = [
   {
     id: "g2",
     campaignId: "camp1",
-    title: "Premium Black Leather Laptop Sleeve Bag",
-    imageUrl: "/Products/bag.webp",
+    title: "iSoothe Eye Massager – Xech",
+    imageUrl: "/Products/Eye Massager/iSoothe-.jpg",
     description:
-      "Stylish and durable leather laptop sleeve offering superior protection while maintaining a sleek, professional look. Designed to fit most laptop sizes, keeping your device secure and scratch-free on the go.",
+      "The iSoothe Eye Massager is a high-quality eye massager that offers Bluetooth connectivity, foldable design, rechargeable battery, and adjustable head strap.",
     type: "physical",
   },
   {
     id: "g3",
     campaignId: "camp1",
-    title: "All-in-One Allure Desk Organizer",
-    imageUrl: "/Products/organizer.webp",
+    title: "Pebble Blaze 2.05 Infinite Display, Multi Sports Modes, Step Pedometer & Notication Smarwatch",
+    imageUrl: "/Products/Smart watch/2.jpg",
     description:
-      "Desk organizer with magnetic lamp (touch switch), wireless charger, alarm clock, USB & Type-C hub, mobile stand, and pen holder — a handy, space-saving addition to any workspace.",
+      "Introducing the Pebble Blaze 2.05 Smartwatch, a fusion of style and performance. With its Infinite Display, Multi Sports Modes, Step Pedometer, and Notification features, this smartwatch is the perfect companion to keep you active, informed, and on top of your game.",
     type: "physical",
   },
   {
