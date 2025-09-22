@@ -78,11 +78,12 @@ async function runSql<T = unknown>(strings: TemplateStringsArray, ...values: unk
 
     const connectionString =
       process.env.POSTGRES_URL_NON_POOLING ||
-      process.env.POSTGRES_PRISMA_URL ||
-      process.env.PRISMA_DATABASE_URL ||
-      process.env.DATABASE_URL ||
       process.env.POSTGRES_URL ||
+      process.env.POSTGRES_PRISMA_URL ||
       "";
+    if (connectionString.startsWith("prisma://")) {
+      throw new Error("Invalid DB connection string: prisma:// URLs are not supported. Use Postgres pooled (POSTGRES_URL) or direct (POSTGRES_URL_NON_POOLING).");
+    }
     if (!connectionString) throw new Error("DB connection string not set (POSTGRES_URL or POSTGRES_URL_NON_POOLING)");
 
     const client = createClient({ connectionString });

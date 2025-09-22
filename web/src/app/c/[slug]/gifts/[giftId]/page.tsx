@@ -120,7 +120,6 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
       <Modal
         open={visualizeOpen}
         onClose={() => setVisualizeOpen(false)}
-        title="3D Visualizer"
         footer={
           <>
             <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => setVisualizeOpen(false)}>Close</button>
