@@ -47,7 +47,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${jost.variable} ${sacramento.variable} ${geistMono.variable} antialiased`}>
-        <ClientMocks />
+        {process.env.NEXT_PUBLIC_API_MOCKING === "enabled" ? <ClientMocks /> : null}
         <OrientationGuard />
         <Header />
         <main className="min-h-[100dvh]">
