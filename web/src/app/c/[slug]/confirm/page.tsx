@@ -3,7 +3,6 @@
 import { use, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getToken } from "@/lib/session";
-import { apiPost } from "@/lib/api";
 import type { Address } from "@/types";
 
 type OrderInput = {
@@ -49,14 +48,20 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
     setError("");
     setLoading(true);
     try {
-      const res = await apiPost<{ orderId: string }>("/api/orders", {
-        campaignSlug: slug,
+      const orderId = `ord_${Math.random().toString(36).slice(2, 10)}`;
+      const summaryData = {
+        id: orderId,
+        gift: { title: gift.title },
         giftId: gift.id,
-        selectedGiftType: gift.type,
-        employee,
+        campaign: { title: undefined },
+        campaignSlug: slug,
+        status: "PLACED",
         address,
-      });
-      router.push(`/order/${res.orderId}/summary`);
+      };
+      if (typeof window !== "undefined") {
+        window.localStorage.setItem(`joytree_order_${orderId}`, JSON.stringify(summaryData));
+      }
+      router.push(`/order/${orderId}/summary`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to place order";
       setError(msg);
