@@ -18,10 +18,10 @@ export const gifts: GiftOption[] = [
   {
     id: "g1",
     campaignId: "camp1",
-    title: "Vego Hydrating Sip Bottle",
-    imageUrl: "/Products/bottle.webp",
+    title: "Wooden Perpetual Calendar with Clock",
+    imageUrl: "/Products/Calander/2.jpg",
     description:
-      "Elevate hydration by making it easier and more stylish with the Vego Sip Bottle. By switching to this reusable bottle, we are helping to reduce single-use plastic waste. Carefully made using safe, BPA-free materials that are tough and long-lasting. Featuring a secure, airtight cap to ensure no spills or leaks. Convenient sip opening; compact and lightweight.",
+      "Enhance your home or office decor with our Wooden Perpetual Calendar with Clock. This elegant and functional piece combines the timeless beauty of wood with the convenience of a perpetual calendar and a built-in clock.",
     type: "physical",
   },
   {
@@ -45,10 +45,10 @@ export const gifts: GiftOption[] = [
   {
     id: "g4",
     campaignId: "camp1",
-    title: "Silver Rocket Shape Pen Holder",
-    imageUrl: "/Products/penHolder.jpg",
+    title: "Printed Customised Floral Copper Bottle",
+    imageUrl: "/Products/Water bottle/2.jpg",
     description:
-      "Fun and quirky rocket-shaped pen holder crafted from high-quality materials for durability — adds personality to any desk setup.",
+      "The Printed Customized Floral Copper Bottle is a beautiful and personalized way to enjoy the benefits of copper-infused water. With its eye-catching floral design and customized printing option, this bottle combines style and functionality. Stay hydrated in a unique and eco-friendly manner with this stunning copper bottle.",
     type: "physical",
   },
 ];

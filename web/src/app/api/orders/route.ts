@@ -1,6 +1,6 @@
 import { orderInputSchema } from "@/lib/validators";
-import { appendOrderToCsv } from "@/lib/csv-server";
 import { campaigns, gifts } from "@/mocks/db";
+import { insertOrder } from "@/lib/db";
 
 export async function POST(request: Request) {
   try {
@@ -17,15 +17,23 @@ export async function POST(request: Request) {
     const campaign = campaigns.find((c) => c.slug === input.campaignSlug);
     const gift = gifts.find((g) => g.id === input.giftId && (!campaign || g.campaignId === campaign.id));
 
-    await appendOrderToCsv({
+    await insertOrder({
       id: orderId,
-      createdAt,
-      campaignSlug: input.campaignSlug,
-      giftId: input.giftId,
-      selectedGiftType: input.selectedGiftType,
-      employee: input.employee,
-      address: input.address,
-      giftTitle: gift?.title,
+      created_at: createdAt,
+      campaign_slug: input.campaignSlug,
+      gift_id: input.giftId,
+      gift_title: gift?.title ?? null,
+      gift_image_url: gift?.imageUrl ?? null,
+      selected_gift_type: input.selectedGiftType ?? null,
+      employee_name: input.employee?.name ?? null,
+      employee_email: input.employee?.email ?? null,
+      employee_emp_id: input.employee?.empId ?? null,
+      employee_mobile: input.employee.mobile,
+      address_line1: input.address?.line1 ?? null,
+      address_line2: input.address?.line2 ?? null,
+      address_city: input.address?.city ?? null,
+      address_state: input.address?.state ?? null,
+      address_pincode: input.address?.pincode ?? null,
     });
 
     return Response.json({ orderId });

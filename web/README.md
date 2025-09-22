@@ -34,3 +34,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Environment
+
+Set the following environment variables locally and on Vercel:
+
+- `POSTGRES_URL` (or `POSTGRES_PRISMA_URL`/`POSTGRES_URL_NON_POOLING`) from Vercel Postgres
+- `NEXT_PUBLIC_API_MOCKING`:
+  - `enabled` to turn on client-side MSW mocks
+  - `disabled` or unset to use real APIs
+
+### Vercel Postgres setup
+
+1. In Vercel dashboard, add the Postgres integration and link it to this project.
+2. Copy the `POSTGRES_URL` env var into Project Settings → Environment Variables.
+3. Redeploy. The app lazily creates the `orders` table if it doesn't exist.
+
+### Notes
+
+- In development, you can enable mocks by setting `NEXT_PUBLIC_API_MOCKING=enabled`.
+- In production, leave it unset/disabled so requests hit real API routes backed by Postgres.
