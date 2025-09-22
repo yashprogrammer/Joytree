@@ -1,4 +1,4 @@
-import { sql } from "@vercel/postgres";
+import { sql, createClient } from "@vercel/postgres";
 
 export type OrderRecord = {
   id: string;
@@ -20,7 +20,7 @@ export type OrderRecord = {
 };
 
 export async function ensureOrdersTable(): Promise<void> {
-  await sql`
+  await runSql`
     CREATE TABLE IF NOT EXISTS orders (
       id TEXT PRIMARY KEY,
       created_at TIMESTAMP WITH TIME ZONE NOT NULL,
@@ -44,7 +44,7 @@ export async function ensureOrdersTable(): Promise<void> {
 
 export async function insertOrder(record: OrderRecord): Promise<void> {
   await ensureOrdersTable();
-  await sql`
+  await runSql`
     INSERT INTO orders (
       id, created_at, campaign_slug, gift_id, gift_title, gift_image_url,
       selected_gift_type, employee_name, employee_email, employee_emp_id,
@@ -60,8 +60,28 @@ export async function insertOrder(record: OrderRecord): Promise<void> {
 
 export async function getAllOrders(): Promise<OrderRecord[]> {
   await ensureOrdersTable();
-  const { rows } = await sql<OrderRecord>`SELECT * FROM orders ORDER BY created_at DESC`;
+  const { rows } = await runSql<OrderRecord>`SELECT * FROM orders ORDER BY created_at DESC`;
   return rows;
+}
+
+type SqlTagged = (<T = unknown>(strings: TemplateStringsArray, ...values: unknown[]) => Promise<{ rows: T[] }>);
+
+async function runSql<T = unknown>(strings: TemplateStringsArray, ...values: unknown[]): Promise<{ rows: T[] }> {
+  try {
+    return await (sql as unknown as SqlTagged)<T>(strings, ...values);
+  } catch (err) {
+    // Fallback to direct client if pooled connection string is not configured
+    const code = typeof err === "object" && err && "code" in err ? (err as { code?: string }).code : undefined;
+    if (code !== "invalid_connection_string") throw err;
+    const client = createClient();
+    await client.connect();
+    try {
+      const result = await (client.sql as unknown as SqlTagged)<T>(strings, ...values);
+      return result;
+    } finally {
+      try { await client.end(); } catch { /* noop */ }
+    }
+  }
 }
 
 
