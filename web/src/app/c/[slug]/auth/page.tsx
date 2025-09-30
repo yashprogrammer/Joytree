@@ -87,7 +87,7 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
         disableEscapeClose
         footer={
           <>
-            <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => setLoginOpen(false)}>Close</button>
+            {/* <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => setLoginOpen(false)}>Close</button> */}
             <button className="btn btn-secondary disabled:opacity-50" onClick={requestOtp} disabled={!canRequestOtp}>
               {loading ? "Sending..." : "Send OTP"}
             </button>
