@@ -76,19 +76,12 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 
       <div className="grid gap-4 md:grid-cols-2">
-        <div className="grid gap-2 border rounded-lg p-4 bg-white">
-          <h2 className="text-lg font-semibold text-gray-900">Employee</h2>
-          <div className="text-sm text-gray-800">Name: {employee?.name}</div>
-          <div className="text-sm text-gray-800">Email: {employee?.email}</div>
-          {employee?.empId ? <div className="text-sm text-gray-800">Employee ID: {employee.empId}</div> : null}
-          <div className="text-sm text-gray-800">Mobile: {employee?.mobile}</div>
-        </div>
-
+        {/* Left column: Gift details */}
         <div className="grid gap-2 border rounded-lg p-4 bg-white">
           <h2 className="text-lg font-semibold text-gray-900">Gift</h2>
           {gift?.imageUrl ? (
-            <div className="w-full aspect-square grid place-items-center bg-white border rounded">
-              <img src={gift.imageUrl} alt="" className="object-contain" style={{ width: "70%", height: "70%" }} />
+            <div className="w-full aspect-square grid place-items-center bg-white  rounded">
+              <img src={gift.imageUrl} alt="" className="object-contain rounded-2xl" style={{ width: "95%", height: "95%" }} />
             </div>
           ) : null}
           {gift?.description ? (
@@ -96,20 +89,31 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
           ) : null}
         </div>
 
-        {gift?.type === "physical" && address ? (
-          <div className="md:col-span-2 grid gap-2 border rounded-lg p-4 bg-white">
-            <h2 className="text-lg font-semibold text-gray-900">Address</h2>
-            <div className="text-sm text-gray-800">{address.recipientName} ({address.phone})</div>
-            {address.email ? <div className="text-sm text-gray-800">{address.email}</div> : null}
-            <div className="text-sm text-gray-800">{address.line1}</div>
-            {address.line2 ? <div className="text-sm text-gray-800">{address.line2}</div> : null}
-            <div className="text-sm text-gray-800">{address.city}, {address.state} {address.pincode}</div>
-            <div className="text-sm text-gray-800">{address.country}</div>
-            {address.landmark ? <div className="text-sm text-gray-800">Landmark: {address.landmark}</div> : null}
-            {address.alternatePhone ? <div className="text-sm text-gray-800">Alt Phone: {address.alternatePhone}</div> : null}
-            {address.addressType ? <div className="text-sm text-gray-800">Type: {address.addressType}</div> : null}
+        {/* Right column: Employee + Address */}
+        <div className="grid gap-4">
+          <div className="flex flex-col gap-2 border rounded-lg p-4 bg-white">
+            <h2 className="text-lg font-semibold text-gray-900">Employee</h2>
+            <div className="text-sm text-gray-800">Name: {employee?.name}</div>
+            <div className="text-sm text-gray-800">Email: {employee?.email}</div>
+            {employee?.empId ? <div className="text-sm text-gray-800">Employee ID: {employee.empId}</div> : null}
+            <div className="text-sm text-gray-800">Mobile: {employee?.mobile}</div>
           </div>
-        ) : null}
+
+          {gift?.type === "physical" && address ? (
+            <div className="grid gap-2 border rounded-lg p-4 bg-white">
+              <h2 className="text-lg font-semibold text-gray-900">Address</h2>
+              <div className="text-sm text-gray-800">{address.recipientName} ({address.phone})</div>
+              {address.email ? <div className="text-sm text-gray-800">{address.email}</div> : null}
+              <div className="text-sm text-gray-800">{address.line1}</div>
+              {address.line2 ? <div className="text-sm text-gray-800">{address.line2}</div> : null}
+              <div className="text-sm text-gray-800">{address.city}, {address.state} {address.pincode}</div>
+              <div className="text-sm text-gray-800">{address.country}</div>
+              {address.landmark ? <div className="text-sm text-gray-800">Landmark: {address.landmark}</div> : null}
+              {address.alternatePhone ? <div className="text-sm text-gray-800">Alt Phone: {address.alternatePhone}</div> : null}
+              {address.addressType ? <div className="text-sm text-gray-800">Type: {address.addressType}</div> : null}
+            </div>
+          ) : null}
+        </div>
       </div>
 
       <div className="flex gap-2">

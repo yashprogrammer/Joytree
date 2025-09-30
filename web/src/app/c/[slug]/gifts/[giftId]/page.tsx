@@ -78,29 +78,37 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
       </button>
 
       {loading ? (
-        <div>Loading...</div>
+        <div className="min-h-[70vh] grid place-items-center">
+          <div className="flex items-center gap-3 text-gray-700">
+            <span
+              className="inline-block w-5 h-5 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"
+              aria-hidden
+            />
+            <span>Loading...</span>
+          </div>
+        </div>
       ) : !gift ? (
         <div className="text-sm text-red-600">{error}</div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="w-full aspect-square grid place-items-center bg-white border rounded">
+          <div className="w-[1/2] aspect-square grid place-items-center  rounded">
             {gift.imageUrl ? (
               <img
                 src={gift.imageUrl}
                 alt=""
                 className="object-contain"
-                style={{ width: "70%", height: "70%" }}
+                style={{ width: "90%", height: "90%" }}
               />
             ) : null}
           </div>
 
-          <div className="grid gap-3">
-            <h1 className="text-2xl font-bold text-gray-900">{gift.title}</h1>
+          <div className="flex flex-col gap-3">
+            <h1 className="text-4xl font-bold text-gray-900">{gift.title}</h1>
             {gift.description ? (
               <p className="text-sm text-gray-700 leading-relaxed">{gift.description}</p>
             ) : null}
 
-            <div className="pt-2 flex gap-2">
+            <div className="pt-2 flex gap-3">
               <button className="btn btn-outline-primary inline-flex items-center gap-2" onClick={() => setVisualizeOpen(true)}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                   <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>

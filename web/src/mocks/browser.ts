@@ -24,7 +24,7 @@ export async function waitForMocksReady(timeoutMs = 3000): Promise<boolean> {
         clearInterval(interval);
         resolve(false);
       }
-    }, 25);
+    }, 2);
   });
 }
 

@@ -17,6 +17,7 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
   const router = useRouter();
   const [gifts, setGifts] = useState<Gift[]>([]);
   const [campaign, setCampaign] = useState<Campaign | null>(null);
+  const [loading, setLoading] = useState(true);
   // selection modal state removed
 
   // Auth guard
@@ -28,6 +29,7 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
   useEffect(() => {
     let cancelled = false;
     const run = async () => {
+      setLoading(true);
       await waitForMocksReady();
       if (cancelled) return;
       apiGet<{ gifts: Gift[]; campaign: Campaign }>(`/api/campaigns/${slug}/gifts`)
@@ -40,6 +42,9 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
           if (cancelled) return;
           setGifts([]);
           setCampaign(null);
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
         });
     };
     run();
@@ -82,6 +87,17 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
   const standWidthPercents = [80, 80, 80, 80]; // width of each square tile as % of image width
 
   return (
+    loading ? (
+      <div className="min-h-screen grid place-items-center">
+        <div className="flex items-center gap-3 text-gray-700">
+          <span
+            className="inline-block w-5 h-5 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"
+            aria-hidden
+          />
+          <span>Loading your joyful options</span>
+        </div>
+      </div>
+    ) : (
     <div className="relative min-h-screen overflow-hidden">
       {/* Viewport-positioned heading */}
       <div className="fixed left-1/2 -translate-x-1/2 top-[clamp(24px,10vh,96px)] z-20 text-center px-4 pointer-events-none">
@@ -133,6 +149,7 @@ export default function GiftsPage({ params }: { params: Promise<{ slug: string }
         </div>
       </div>
     </div>
+    )
   );
 }
 
