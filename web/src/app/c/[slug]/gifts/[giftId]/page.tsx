@@ -6,8 +6,9 @@ import { apiGet } from "@/lib/api";
 import { waitForMocksReady } from "@/mocks/browser";
 import { getToken } from "@/lib/session";
 import Modal from "@/components/Modal";
+import ImageCarousel from "@/components/ImageCarousel";
 
-type Gift = { id: string; title: string; imageUrl?: string; description?: string; type: "physical" | "digital" };
+type Gift = { id: string; title: string; imageUrl?: string; imageUrls?: string[]; description?: string; type: "physical" | "digital" };
 type Campaign = { id: string; slug: string; title: string; videoUrl?: string };
 
 export default function GiftDetailsPage({ params }: { params: Promise<{ slug: string; giftId: string }> }) {
@@ -61,7 +62,7 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
     if (typeof window !== "undefined") {
       window.localStorage.setItem(
         "joytree_selected_gift",
-        JSON.stringify({ id: gift.id, type: gift.type, title: gift.title, imageUrl: gift.imageUrl, description: gift.description })
+        JSON.stringify({ id: gift.id, type: gift.type, title: gift.title, imageUrl: gift.imageUrl, imageUrls: gift.imageUrls, description: gift.description })
       );
     }
     if (gift.type === "physical") {
@@ -91,15 +92,12 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
         <div className="text-sm text-red-600">{error}</div>
       ) : (
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="w-[1/2] aspect-square grid place-items-center  rounded">
-            {gift.imageUrl ? (
-              <img
-                src={gift.imageUrl}
-                alt=""
-                className="object-contain"
-                style={{ width: "90%", height: "90%" }}
-              />
-            ) : null}
+          <div className="w-full aspect-square">
+            <ImageCarousel
+              images={gift.imageUrls || (gift.imageUrl ? [gift.imageUrl] : [])}
+              alt={gift.title}
+              className="w-full h-full"
+            />
           </div>
 
           <div className="flex flex-col gap-3">

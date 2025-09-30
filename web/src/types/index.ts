@@ -13,6 +13,7 @@ export type GiftOption = {
   campaignId: string;
   title: string;
   imageUrl: string;
+  imageUrls?: string[]; // Multiple images for carousel
   description?: string;
   type: "physical" | "digital";
 };
