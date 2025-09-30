@@ -10,7 +10,6 @@ export default function CampaignVideoPage({ params }: { params: Promise<{ slug: 
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [isMuted, setIsMuted] = useState(false);
   const [volume, setVolume] = useState(0.6);
-  const [isLoading, setIsLoading] = useState(true);
 
   // Auth guard
   useEffect(() => {
@@ -21,18 +20,6 @@ export default function CampaignVideoPage({ params }: { params: Promise<{ slug: 
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
-    
-    // Loading state handlers
-    const onLoadStart = () => setIsLoading(true);
-    const onCanPlay = () => setIsLoading(false);
-    const onWaiting = () => setIsLoading(true);
-    const onPlaying = () => setIsLoading(false);
-    
-    v.addEventListener("loadstart", onLoadStart);
-    v.addEventListener("canplay", onCanPlay);
-    v.addEventListener("waiting", onWaiting);
-    v.addEventListener("playing", onPlaying);
-    
     // Auto play when routed here
     const play = async () => {
       try {
@@ -80,10 +67,6 @@ export default function CampaignVideoPage({ params }: { params: Promise<{ slug: 
     window.addEventListener("joytree:orientation-overlay", onOverlayToggle as EventListener);
 
     return () => {
-      v.removeEventListener("loadstart", onLoadStart);
-      v.removeEventListener("canplay", onCanPlay);
-      v.removeEventListener("waiting", onWaiting);
-      v.removeEventListener("playing", onPlaying);
       v.removeEventListener("seeking", preventSeek);
       v.removeEventListener("timeupdate", trackTime);
       v.removeEventListener("ended", onEnded);
@@ -121,28 +104,14 @@ export default function CampaignVideoPage({ params }: { params: Promise<{ slug: 
 
   return (
     <div className="fixed inset-0 bg-[var(--surface-light)]">
-      {/* Loading Spinner Overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-            </div>
-            <p className="text-white text-lg font-medium">Loading video...</p>
-          </div>
-        </div>
-      )}
-
-      {/* Skip Button - Improved visibility */}
       <button
         type="button"
-        className="absolute bottom-4 right-4 z-30 px-6 py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transition-all duration-200 border border-white/20"
+        className="absolute bottom-4 right-4 z-10 px-4 py-2 rounded btn btn-outline-secondary"
         onClick={() => router.push(`/c/${slug}/gifts`)}
         aria-label="Skip video"
       >
-        Skip →
+        Skip
       </button>
-      
       <video
         ref={videoRef}
         className="w-screen h-screen object-cover"
