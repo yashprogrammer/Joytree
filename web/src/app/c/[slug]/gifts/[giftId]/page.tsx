@@ -120,13 +120,15 @@ export default function GiftDetailsPage({ params }: { params: Promise<{ slug: st
       <Modal
         open={visualizeOpen}
         onClose={() => setVisualizeOpen(false)}
-        footer={
-          <>
-            <button className="px-3 py-2 border border-gray-300 rounded text-gray-800" onClick={() => setVisualizeOpen(false)}>Close</button>
-          </>
-        }
       >
-        <div className="w-full" style={{height: "50vh" }}>
+        <div className="w-full relative" style={{height: "50vh" }}>
+          <button
+            aria-label="Close"
+            onClick={() => setVisualizeOpen(false)}
+            className="absolute top-2 right-2 inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-100"
+          >
+            <span aria-hidden>×</span>
+          </button>
           <iframe
             src={visualizeUrl}
             title="3D Model"
