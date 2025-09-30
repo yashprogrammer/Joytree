@@ -62,8 +62,22 @@ export default function AddressPage({ params }: { params: Promise<{ slug: string
   });
 
   const onReset = () => {
-    if (typeof window !== "undefined") window.localStorage.removeItem("joytree_address");
-    reset();
+    const hasWindow = typeof window !== "undefined";
+    if (hasWindow) window.localStorage.removeItem("joytree_address");
+    reset({
+      recipientName: "",
+      phone: hasWindow ? (window.localStorage.getItem("joytree_mobile") || "") : "",
+      email: "",
+      line1: "",
+      line2: "",
+      city: "",
+      state: "",
+      pincode: "",
+      country: "India",
+      alternatePhone: "",
+      landmark: "",
+      addressType: "home",
+    });
   };
 
   return (
