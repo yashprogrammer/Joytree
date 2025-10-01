@@ -56,21 +56,17 @@ export default function Modal({ open, title, onClose, footer, children, disableB
     if (!open) return;
     const body = document.body;
     const prevOverflow = body.style.overflow;
-    const prevPaddingRight = body.style.paddingRight;
-    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
     body.style.overflow = "hidden";
-    if (scrollBarWidth > 0) body.style.paddingRight = `${scrollBarWidth}px`;
     return () => {
       body.style.overflow = prevOverflow;
-      body.style.paddingRight = prevPaddingRight;
     };
   }, [open]);
 
   if (!open) return null;
 
   return (
-    <div role="dialog" aria-modal className="fixed inset-0 bg-black/40 flex items-center justify-center p-4" onClick={disableBackdropClose ? undefined : onClose}>
-      <div ref={panelRef} className="bg-white text-black rounded p-4 max-w-md w-full" onClick={(e) => e.stopPropagation()} tabIndex={-1}>
+    <div role="dialog" aria-modal className="fixed inset-0 flex items-center justify-center p-4" onClick={disableBackdropClose ? undefined : onClose}>
+      <div ref={panelRef} className="bg-white text-black rounded p-4 max-w-md w-full shadow-lg" onClick={(e) => e.stopPropagation()} tabIndex={-1}>
         {title ? <h2 className="text-xl font-semibold mb-3">{title}</h2> : null}
         <div className="grid gap-3">
           {children}

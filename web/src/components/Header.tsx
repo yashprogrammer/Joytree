@@ -13,6 +13,9 @@ export default function Header() {
 
   if (shouldHideHeader) return null;
 
+  // Check if we're on auth page: /c/[slug]/auth
+  const isAuthPage = /^\/c\/[^/]+\/auth$/.test(pathname || "");
+
   // Check if we're on details page: /c/[slug]/details
   const isDetailsPage = /^\/c\/[^/]+\/details$/.test(pathname || "");
 
@@ -39,6 +42,17 @@ export default function Header() {
 
     // Default behavior for other pages (handled by Link)
   };
+
+  // For auth page, render with transparent background and absolute positioning
+  if (isAuthPage) {
+    return (
+      <div className="absolute top-0 left-0 z-10 px-2 pt-2">
+        <div className="cursor-default">
+          <Image src="/JoytreeLogo.png" alt="Joytree" width={96} height={24} priority />
+        </div>
+      </div>
+    );
+  }
 
   // For details page, render as non-clickable
   if (isDetailsPage) {

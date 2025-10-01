@@ -77,7 +77,10 @@ export default function AuthPage({ params }: { params: Promise<{ slug: string }>
   };
 
   return (
-    <div className="min-h-[60vh] grid place-items-center p-6">
+    <div 
+      className="fixed inset-0 w-screen h-screen grid place-items-center p-6 bg-cover bg-center bg-no-repeat overflow-hidden"
+      style={{ backgroundImage: 'url(/JoytreeBGImage.png)' }}
+    >
 
       <Modal
         open={loginOpen}
