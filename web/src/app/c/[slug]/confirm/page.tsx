@@ -48,7 +48,37 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
     setError("");
     setLoading(true);
     try {
-      const orderId = `ord_${Math.random().toString(36).slice(2, 10)}`;
+      // Create order payload
+      const orderPayload: OrderInput = {
+        campaignSlug: slug,
+        giftId: gift.id,
+        selectedGiftType: gift.type,
+        employee: employee,
+        address: gift.type === "physical" ? address : undefined,
+      };
+
+      console.log("📤 Submitting order to API:", orderPayload);
+
+      // Call the real API endpoint
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderPayload),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to place order");
+      }
+
+      const data = await response.json();
+      const orderId = data.orderId;
+
+      console.log("✅ Order placed successfully:", orderId);
+
+      // Store order info in localStorage for the summary page
       const summaryData = {
         id: orderId,
         gift: { title: gift.title },
@@ -61,9 +91,11 @@ export default function ConfirmPage({ params }: { params: Promise<{ slug: string
       if (typeof window !== "undefined") {
         window.localStorage.setItem(`joytree_order_${orderId}`, JSON.stringify(summaryData));
       }
+
       router.push(`/order/${orderId}/summary`);
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to place order";
+      console.error("❌ Order placement failed:", e);
       setError(msg);
     } finally {
       setLoading(false);

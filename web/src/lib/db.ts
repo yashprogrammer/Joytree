@@ -1,4 +1,4 @@
-import { sql, createClient } from "@vercel/postgres";
+import { Pool, QueryResult } from "pg";
 
 export type OrderRecord = {
   id: string;
@@ -18,6 +18,65 @@ export type OrderRecord = {
   address_state: string | null;
   address_pincode: string | null;
 };
+
+// Create a connection pool
+let pool: Pool | null = null;
+
+function getPool(): Pool {
+  if (!pool) {
+    const connectionString =
+      process.env.POSTGRES_URL ||
+      process.env.DATABASE_URL ||
+      process.env.POSTGRES_URL_NON_POOLING;
+
+    if (!connectionString) {
+      throw new Error(
+        "Database connection string not set. Please set POSTGRES_URL or DATABASE_URL in your .env.local file"
+      );
+    }
+
+    pool = new Pool({
+      connectionString,
+      // Optional: configure pool settings
+      max: 20, // maximum number of clients in the pool
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    });
+
+    // Handle pool errors
+    pool.on("error", (err) => {
+      console.error("Unexpected error on idle client", err);
+    });
+  }
+  return pool;
+}
+
+// Tagged template function for SQL queries
+async function runSql<T = unknown>(
+  strings: TemplateStringsArray,
+  ...values: unknown[]
+): Promise<{ rows: T[] }> {
+  const pool = getPool();
+  
+  // Build the SQL query with placeholders
+  let query = strings[0];
+  const params: unknown[] = [];
+  
+  for (let i = 0; i < values.length; i++) {
+    params.push(values[i]);
+    query += `$${i + 1}` + strings[i + 1];
+  }
+
+  try {
+    const result: QueryResult<T> = await pool.query(query, params);
+    return { rows: result.rows };
+  } catch (error) {
+    console.error("Database query error:", error);
+    console.error("Query:", query);
+    console.error("Params:", params);
+    throw error;
+  }
+}
 
 export async function ensureOrdersTable(): Promise<void> {
   await runSql`
@@ -64,37 +123,10 @@ export async function getAllOrders(): Promise<OrderRecord[]> {
   return rows;
 }
 
-type SqlTagged = (<T = unknown>(strings: TemplateStringsArray, ...values: unknown[]) => Promise<{ rows: T[] }>);
-
-async function runSql<T = unknown>(strings: TemplateStringsArray, ...values: unknown[]): Promise<{ rows: T[] }> {
-  try {
-    return await (sql as unknown as SqlTagged)<T>(strings, ...values);
-  } catch (err) {
-    // Fallback to direct client if pooled connection string is not configured
-    const code = typeof err === "object" && err && "code" in err ? (err as { code?: string }).code : undefined;
-    const msg = typeof err === "object" && err && "message" in err ? String((err as { message?: unknown }).message) : "";
-    const shouldFallback = code === "invalid_connection_string" || msg.includes("invalid_connection_string");
-    if (!shouldFallback) throw err;
-
-    const connectionString =
-      process.env.POSTGRES_URL_NON_POOLING ||
-      process.env.POSTGRES_URL ||
-      process.env.POSTGRES_PRISMA_URL ||
-      "";
-    if (connectionString.startsWith("prisma://")) {
-      throw new Error("Invalid DB connection string: prisma:// URLs are not supported. Use Postgres pooled (POSTGRES_URL) or direct (POSTGRES_URL_NON_POOLING).");
-    }
-    if (!connectionString) throw new Error("DB connection string not set (POSTGRES_URL or POSTGRES_URL_NON_POOLING)");
-
-    const client = createClient({ connectionString });
-    await client.connect();
-    try {
-      const result = await (client.sql as unknown as SqlTagged)<T>(strings, ...values);
-      return result;
-    } finally {
-      try { await client.end(); } catch { /* noop */ }
-    }
+// Optional: Close the pool when the application shuts down
+export async function closePool(): Promise<void> {
+  if (pool) {
+    await pool.end();
+    pool = null;
   }
 }
-
-
