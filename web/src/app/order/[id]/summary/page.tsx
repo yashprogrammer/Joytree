@@ -1,6 +1,7 @@
 "use client";
 import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import type { Address } from "@/types";
 
 export default function OrderSummaryPage({ params }: { params: Promise<{ id: string }> }) {
@@ -17,6 +18,7 @@ export default function OrderSummaryPage({ params }: { params: Promise<{ id: str
 
   const [data, setData] = useState<OrderSummaryData | null>(null);
   const [error, setError] = useState<string>("");
+  const [showCelebration, setShowCelebration] = useState(false);
   useEffect(() => {
     // Try to read from local storage (mock order placed on confirm page)
     try {
@@ -32,6 +34,16 @@ export default function OrderSummaryPage({ params }: { params: Promise<{ id: str
       .then((d: unknown) => setData(d as OrderSummaryData))
       .catch((e) => setError(String(e)));
   }, [id]);
+
+  // Trigger celebration animation on mount
+  useEffect(() => {
+    setShowCelebration(true);
+    // Hide celebration after animation completes (adjust timing as needed)
+    const timer = setTimeout(() => {
+      setShowCelebration(false);
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Prevent/back-redirect logic: do not allow navigating back away from Thank You.
   // If the user attempts to go back, push them to OTP login for the campaign.
@@ -104,6 +116,38 @@ export default function OrderSummaryPage({ params }: { params: Promise<{ id: str
         </div>
       )}
       <Link className="px-3 py-2 border rounded w-fit" href="/">Go to home</Link>
+
+      {/* Celebration Animations */}
+      {showCelebration && (
+        <>
+          {/* Top-left celebration */}
+          <div className="fixed top-0 left-0 w-64 h-64 pointer-events-none z-50">
+            <DotLottieReact
+              src="/congratulations.lottie"
+              loop={false}
+              autoplay
+            />
+          </div>
+          
+          {/* Top-right celebration */}
+          <div className="fixed top-0 right-0 w-64 h-64 pointer-events-none z-50">
+            <DotLottieReact
+              src="/congratulations.lottie"
+              loop={false}
+              autoplay
+            />
+          </div>
+          
+          {/* Center celebration */}
+          <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 pointer-events-none z-50">
+            <DotLottieReact
+              src="/congratulations.lottie"
+              loop={false}
+              autoplay
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

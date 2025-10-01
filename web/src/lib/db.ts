@@ -1,4 +1,4 @@
-import { Pool, QueryResult } from "pg";
+import { Pool, QueryResult, QueryResultRow } from "pg";
 
 export type OrderRecord = {
   id: string;
@@ -52,7 +52,7 @@ function getPool(): Pool {
 }
 
 // Tagged template function for SQL queries
-async function runSql<T = unknown>(
+async function runSql<T extends QueryResultRow = QueryResultRow>(
   strings: TemplateStringsArray,
   ...values: unknown[]
 ): Promise<{ rows: T[] }> {
@@ -68,7 +68,7 @@ async function runSql<T = unknown>(
   }
 
   try {
-    const result: QueryResult<T> = await pool.query(query, params);
+    const result = await pool.query(query, params) as QueryResult<T>;
     return { rows: result.rows };
   } catch (error) {
     console.error("Database query error:", error);

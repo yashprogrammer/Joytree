@@ -49,7 +49,7 @@ export const gifts: GiftOption[] = [
   {
     id: "g3",
     campaignId: "camp1",
-    title: "Pebble Blaze 2.05 Infinite Display, Multi Sports Modes, Step Pedometer & Notication Smarwatch",
+    title: "Pebble Blaze 2.05 Smarwatch",
     imageUrl: "/Products/Smart watch/2.jpg",
     imageUrls: [
       "/Products/Smart watch/Front.jpg",
