@@ -138,7 +138,7 @@ export default function OrderSummaryPage({ params }: { params: Promise<{ id: str
             />
           </div>
           
-          {/* Center celebration test ci */}
+          {/* Center celebration test ci cd check */}
           <div className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 pointer-events-none z-50">
             <DotLottieReact
               src="/congratulations.lottie"

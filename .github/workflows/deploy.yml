@@ -54,50 +54,82 @@ jobs:
           tar -czf ../joytree-app.tar.gz .
           cd ..
 
-          - name: Configure SSH
-          run: |
-            mkdir -p ~/.ssh
-            echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/ec2-key.pem
-            
-            # Remove any carriage returns or extra whitespace
-            sed -i 's/\r$//' ~/.ssh/ec2-key.pem
-            
-            # Ensure proper line endings
-            chmod 600 ~/.ssh/ec2-key.pem
-            
-            # Add host to known_hosts
-            ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
-            
-            # Test the key format
-            ssh-keygen -l -f ~/.ssh/ec2-key.pem || echo "Key format check failed"
+      - name: Configure SSH
+        run: |
+          mkdir -p ~/.ssh
+          
+          # Write SSH key with proper quoting
+          cat > ~/.ssh/ec2-key.pem << 'SSHKEY'
+          ${{ secrets.EC2_SSH_KEY }}
+          SSHKEY
+          
+          # Set strict permissions
+          chmod 600 ~/.ssh/ec2-key.pem
+          
+          # Verify key format
+          echo "Checking SSH key..."
+          if ssh-keygen -l -f ~/.ssh/ec2-key.pem; then
+            echo "✓ SSH key format is valid"
+          else
+            echo "✗ SSH key format is invalid"
+            exit 1
+          fi
+          
+          # Add EC2 host to known_hosts
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Upload to EC2
         run: |
+          echo "📤 Uploading build to EC2..."
           scp -i ~/.ssh/ec2-key.pem \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
             web/joytree-app.tar.gz \
             ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/
+          echo "✓ Upload complete"
 
       - name: Deploy on EC2
         run: |
-          ssh -i ~/.ssh/ec2-key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'ENDSSH'
+          echo "🚀 Deploying application on EC2..."
+          ssh -i ~/.ssh/ec2-key.pem \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'ENDSSH'
+            set -e
+            
+            echo "📦 Extracting new build..."
             cd ~
-            rm -rf joytree-app-old
-            mv joytree-app joytree-app-old 2>/dev/null || true
+            rm -rf joytree-app-backup
+            mv joytree-app joytree-app-backup 2>/dev/null || true
             mkdir joytree-app
             cd joytree-app
             tar -xzf ~/joytree-app.tar.gz
             
-            # Restart PM2
+            echo "🔄 Restarting PM2 process..."
             pm2 restart joytree-gift || PORT=3001 pm2 start server.js --name joytree-gift -i 1
             pm2 save
             
-            # Verify deployment
+            echo "⏳ Waiting for application to start..."
             sleep 5
+            
+            echo "✅ Verifying deployment..."
             if pm2 list | grep -q "joytree-gift.*online"; then
               echo "✅ Deployment successful!"
+              curl -f http://localhost:3001 > /dev/null 2>&1 && echo "✅ Health check passed!" || echo "⚠️ Health check warning"
+              
+              # Cleanup
+              rm -rf ~/joytree-app-backup
+              rm -f ~/joytree-app.tar.gz
             else
               echo "❌ Deployment failed!"
-              pm2 logs joytree-gift --lines 50
+              pm2 logs joytree-gift --lines 50 --nostream
+              
+              # Rollback
+              echo "🔄 Rolling back to previous version..."
+              cd ~
+              rm -rf joytree-app
+              mv joytree-app-backup joytree-app 2>/dev/null || true
+              pm2 restart joytree-gift
               exit 1
             fi
           ENDSSH
