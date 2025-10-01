@@ -133,16 +133,6 @@ a:hover { color: var(--brand-primary-hover); }
   50% { opacity: 1; transform: scale(1) rotate(180deg); }
 }
 
-@keyframes glow-ring-pulse {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 0.4;
-  }
-  50% {
-    transform: scale(1.08);
-    opacity: 0.6;
-  }
-}
   
 @keyframes bounce-soft {
   0%, 100% { transform: translateY(0); }
@@ -233,30 +223,7 @@ a:hover { color: var(--brand-primary-hover); }
 .gift-image-float:nth-child(3) { animation-delay: 1s; }
 .gift-image-float:nth-child(4) { animation-delay: 1.5s; }
 
-.subtle-glow-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 120%;
-  height: 120%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    transparent 60%,
-    rgba(214, 97, 102, 0.15) 70%,
-    rgba(40, 146, 162, 0.15) 80%,
-    transparent 90%
-  );
-  pointer-events: none;
-  animation: glow-ring-pulse 3s ease-in-out infinite;
-  z-index: 0;
-}
 
-.subtle-glow-ring:nth-child(1) { animation-delay: 0s; }
-.subtle-glow-ring:nth-child(2) { animation-delay: 0.75s; }
-.subtle-glow-ring:nth-child(3) { animation-delay: 1.5s; }
-.subtle-glow-ring:nth-child(4) { animation-delay: 2.25s; }
   
 .celebration-particle {
   position: absolute;

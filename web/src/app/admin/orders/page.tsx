@@ -77,21 +77,34 @@ export default function AdminOrdersPage() {
             <th className="border px-2 py-1 text-left">Mobile</th>
             <th className="border px-2 py-1 text-left">Gift</th>
             <th className="border px-2 py-1 text-left">Type</th>
+            <th className="border px-2 py-1 text-left">Address</th>
             <th className="border px-2 py-1 text-left">Created</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map((r, idx) => (
-            <tr key={`${r.orderId || idx}`}>
-              <td className="border px-2 py-1">{r.orderId}</td>
-              <td className="border px-2 py-1">{r.campaignSlug}</td>
-              <td className="border px-2 py-1">{r.employeeName}</td>
-              <td className="border px-2 py-1">{r.employeeMobile}</td>
-              <td className="border px-2 py-1">{r.giftTitle || r.giftId}</td>
-              <td className="border px-2 py-1">{r.selectedGiftType}</td>
-              <td className="border px-2 py-1">{r.createdAt}</td>
-            </tr>
-          ))}
+          {rows.map((r, idx) => {
+            const addressParts = [
+              r.addressLine1,
+              r.addressLine2,
+              r.addressCity,
+              r.addressState,
+              r.addressPincode,
+            ].filter(Boolean);
+            const fullAddress = addressParts.length > 0 ? addressParts.join(", ") : "-";
+            
+            return (
+              <tr key={`${r.orderId || idx}`}>
+                <td className="border px-2 py-1">{r.orderId}</td>
+                <td className="border px-2 py-1">{r.campaignSlug}</td>
+                <td className="border px-2 py-1">{r.employeeName}</td>
+                <td className="border px-2 py-1">{r.employeeMobile}</td>
+                <td className="border px-2 py-1">{r.giftTitle || r.giftId}</td>
+                <td className="border px-2 py-1">{r.selectedGiftType}</td>
+                <td className="border px-2 py-1 max-w-xs">{fullAddress}</td>
+                <td className="border px-2 py-1">{r.createdAt}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </div>
