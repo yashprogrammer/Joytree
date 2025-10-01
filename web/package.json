@@ -11,6 +11,7 @@
   "dependencies": {
     "@dotlottie/player-component": "^2.7.12",
     "@hookform/resolvers": "^5.2.1",
+    "@lottiefiles/dotlottie-react": "^0.17.3",
     "msw": "^2.11.2",
     "next": "15.5.3",
     "pg": "^8.16.3",
