@@ -79,3 +79,188 @@ a:hover { color: var(--brand-primary-hover); }
 
 /* Section header style cue */
 .section-header { background: var(--surface-light); }
+
+/* Celebration animations for gift selection */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+@keyframes float-gentle {
+  0%, 100% { 
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+  50% { 
+    transform: translateY(-4px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(-1deg);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes scaleIn {
+  0% { 
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  100% { 
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(214, 97, 102, 0.3),
+                0 0 40px rgba(214, 97, 102, 0.1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(214, 97, 102, 0.5),
+                0 0 60px rgba(214, 97, 102, 0.2);
+  }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+@keyframes glow-ring-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.6;
+  }
+}
+  
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float-particle {
+  0% {
+    transform: translateY(100vh) translateX(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  90% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-100px) translateX(50px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.gift-card-animated {
+  animation: scaleIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.gift-card-animated:nth-child(1) { animation-delay: 0.1s; }
+.gift-card-animated:nth-child(2) { animation-delay: 0.2s; }
+.gift-card-animated:nth-child(3) { animation-delay: 0.3s; }
+.gift-card-animated:nth-child(4) { animation-delay: 0.4s; }
+
+.gift-card-hover {
+  position: relative;
+  border-radius: 16px;
+  overflow: visible;
+}
+
+.gift-card-hover:hover {
+  transform: translateY(-12px) scale(1.05);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.gift-card-hover::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(
+    45deg,
+    var(--brand-primary),
+    var(--brand-secondary),
+    #fbbf24,
+    var(--brand-primary)
+  );
+  background-size: 300% 300%;
+  border-radius: 18px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.gift-card-hover:hover::before {
+  opacity: 1;
+  animation: shimmer 2s linear infinite;
+}
+
+.landscape-gift-item {
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.landscape-gift-item:hover {
+  transform: scale(1.15) translateY(-10px);
+}
+
+.gift-image-float {
+  animation: float-gentle 4s ease-in-out infinite;
+}
+
+.gift-image-float:nth-child(1) { animation-delay: 0s; }
+.gift-image-float:nth-child(2) { animation-delay: 0.5s; }
+.gift-image-float:nth-child(3) { animation-delay: 1s; }
+.gift-image-float:nth-child(4) { animation-delay: 1.5s; }
+
+.subtle-glow-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 120%;
+  height: 120%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    transparent 60%,
+    rgba(214, 97, 102, 0.15) 70%,
+    rgba(40, 146, 162, 0.15) 80%,
+    transparent 90%
+  );
+  pointer-events: none;
+  animation: glow-ring-pulse 3s ease-in-out infinite;
+  z-index: 0;
+}
+
+.subtle-glow-ring:nth-child(1) { animation-delay: 0s; }
+.subtle-glow-ring:nth-child(2) { animation-delay: 0.75s; }
+.subtle-glow-ring:nth-child(3) { animation-delay: 1.5s; }
+.subtle-glow-ring:nth-child(4) { animation-delay: 2.25s; }
+  
+.celebration-particle {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  animation: float-particle linear infinite;
+}
