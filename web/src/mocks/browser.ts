@@ -12,6 +12,9 @@ export async function enableMocking() {
 
 export async function waitForMocksReady(timeoutMs = 3000): Promise<boolean> {
   if (typeof window === "undefined") return true;
+  // If mocking is not enabled, return immediately without waiting
+  if (process.env.NEXT_PUBLIC_API_MOCKING !== "enabled") return true;
+  
   const win = window as unknown as { __mswReady?: boolean };
   if (win.__mswReady) return true;
   const start = Date.now();
